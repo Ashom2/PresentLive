@@ -6,6 +6,7 @@ import DeckEditor from './components/DeckEditor';
 import DeckPresenter from './components/DeckPresenter';
 import DeckAudience from './components/DeckAudience';
 import Join from './components/Join';
+import NewDeck from './components/NewDeck';
 
 /**
  * The root component of the PresentLive application.
@@ -36,6 +37,7 @@ function App() {
           <Route path="/decks/:id/presenter" element={<DeckPresenter />} />
           <Route path="/decks/:id/audience" element={<DeckAudience />} />
           <Route path="/join" element={<Join />} />
+          <Route path="/decks/create" element={<NewDeck />} />
         </Routes>
       </main>
     </Router>

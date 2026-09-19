@@ -24,7 +24,7 @@ function PresentationManager() {
         </button>
         <button
           className="btn btn-sm btn-primary"
-          onClick={() => navigate('/editor')}
+          onClick={() => navigate('/decks/create')}
         >
           + New presentation
         </button>
