@@ -25,7 +25,7 @@ function Header({ brandText, navLinks }) {
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
-      <div className="container">
+      <div className="w-100 d-flex align-items-center justify-content-between px-4">
         <Link to="/" className="navbar-brand">{brandText}</Link>
         <ul className="navbar-nav ms-auto flex-row gap-3">
           {navLinks.map((link, index) => (

@@ -28,19 +28,17 @@ function App() {
 
   return (
     <Router>
-      <div>
-        <Header brandText="PresentLive" navLinks={navLinks} />
-        <div className="container mt-5">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/decks" element={<PresentationManager />} />
-            <Route path="/decks/:id/editor" element={<DeckEditor />} />
-            <Route path="/decks/:id/presenter" element={<DeckPresenter />} />
-            <Route path="/decks/:id/audience" element={<DeckAudience />} />
-            <Route path="/join" element={<Join />} />
-          </Routes>
-        </div>
-      </div>
+      <Header brandText="PresentLive" navLinks={navLinks} />
+      <main className="app-main">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/decks" element={<PresentationManager />} />
+          <Route path="/decks/:id/editor" element={<DeckEditor />} />
+          <Route path="/decks/:id/presenter" element={<DeckPresenter />} />
+          <Route path="/decks/:id/audience" element={<DeckAudience />} />
+          <Route path="/join" element={<Join />} />
+        </Routes>
+      </main>
     </Router>
   );
 }
