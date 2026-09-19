@@ -1,9 +1,91 @@
 import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
 
+
+
+
+
+
+
+const initialTodos = [
+  { task: "Take out the trash", completed: false },
+  { task: "Walk the dog", completed: true },
+  { task: "Do the weekly quizzes", completed: false },
+];
+
+function Todo({ task, completed, onToggle }) {
+  return (
+    <section>
+      <input type="checkbox" checked={completed} onChange={onToggle} />
+      <p style={{ display: "inline-block", marginLeft: "0.5rem" }}>
+        {task}
+      </p>
+    </section>
+  );
+}
+
+function NewTodoForm({ onAdd }) {
+  const [text, setText] = useState("");
+
+  function submit(e) {
+    e.preventDefault();
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    onAdd({ task: trimmed, completed: false });
+    setText("");
+  }
+
+  return (
+    <form onSubmit={submit} style={{ margin: "1rem 0" }}>
+      <input
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder="New task…"
+      />
+      <button type="submit" style={{ marginLeft: "0.5rem" }}>
+        Add
+      </button>
+    </form>
+  );
+}
+
+export default function App() {
+  const [todos, setTodos] = useState(initialTodos);
+
+  function toggleCompleted(task) {
+    setTodos((prev) =>
+      prev.map((t) =>
+        t.task === task ? { ...t, completed: !t.completed } : t
+      )
+    );
+  }
+
+  function addTodo(todo) {
+    setTodos((prev) => [...prev, todo]); // append to end
+  }
+  
+  return (
+    <>
+      <header>
+        <h1>Todo App</h1>
+      </header>
+
+      <main>
+        <h2>List of Todos</h2>
+        <NewTodoForm onAdd={addTodo} />
+        {todos.map((todo) => (
+          <Todo 
+            key={todo.task} 
+            {...todo}
+            onToggle={() => toggleCompleted(todo.task)}
+          />
+        ))}
+      </main>
+    </>
+  );
+}
+
+
+/*
 function App() {
   const [count, setCount] = useState(0)
 
@@ -120,3 +202,4 @@ function App() {
 }
 
 export default App
+*/
