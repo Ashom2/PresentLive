@@ -22,7 +22,7 @@ function DeckPresenter() {
 
   return (
     <div className="page-box">
-      <div className="page-title">Presenter view — {deck.title}</div>
+      <div className="page-title h4">Presenter view - {deck.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
           className="btn btn-sm btn-outline-secondary"

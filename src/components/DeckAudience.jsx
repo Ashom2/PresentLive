@@ -23,7 +23,7 @@ function DeckAudience() {
 
   return (
     <div className="page-box">
-      <div className="page-title">Audience view — {deck.title}</div>
+      <div className="page-title h4">Audience view — {deck.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
           className="btn btn-sm btn-outline-secondary"
