@@ -14,13 +14,13 @@ function PresentationManager() {
 
   return (
     <div className="page-box">
-      <div className="page-title h4">My presentations</div>
+      <div className="page-title text-center h4">My presentations</div>
       <div className="d-flex justify-content-between mb-3">
         <button
           className="btn btn-sm btn-outline-secondary"
           onClick={() => navigate('/')}
         >
-          ← Back
+          ← Home
         </button>
         <button
           className="btn btn-sm btn-primary"

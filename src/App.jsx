@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
-import PresentationManager from './components/PresentationManager';
+import PresentationManager from './components/DeckManager';
 import DeckEditor from './components/DeckEditor';
 import DeckPresenter from './components/DeckPresenter';
 import DeckAudience from './components/DeckAudience';

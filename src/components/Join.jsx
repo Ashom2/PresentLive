@@ -53,11 +53,7 @@ function Join() {
 
   return (
     <div className="page-box">
-      <div className="page-title h4">Join a presentation</div>
-      <p className="text-start text-muted mb-4">
-        Enter the presentation link or code you were given, then your display name.
-      </p>
-
+      <div className="page-title text-center h4">Join a presentation</div>
       <div className="mb-3">
         <label className="form-label small fw-semibold">Presentation link or code</label>
         <input

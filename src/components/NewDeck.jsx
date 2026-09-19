@@ -61,7 +61,7 @@ function NewDeck() {
 
   return (
     <div className="page-box">
-      <div className="page-title h4">New presentation</div>
+      <div className="page-title text-center h4">New presentation</div>
 
       <div className="mb-3">
         <label className="form-label small fw-semibold">Presentation title</label>

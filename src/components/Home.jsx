@@ -19,12 +19,12 @@ function Home() {
 
   return (
     <div className="page-box">
-      <h1 className='mb-4'>Welcome to PresentLive!</h1>
-      <p className="text-muted mb-4">Create, share, and present slide decks in the browser.</p>
+      <h1 className='text-center'>Welcome to PresentLive!</h1>
+      <p className="text-center text-muted">Create, share, and present slide decks in the browser.</p>
       <div className="row g-3">
         <div className="col-md-6">
           <div className="simple-border">
-            <h6 className="fw-semibold">Join a presentation</h6>
+            <h6 className="text-center fw-semibold">Join a presentation</h6>
             <p className="small text-muted mb-2">Enter the presentation link or code</p>
             <div className="input-group mb-2">
               <input
@@ -45,7 +45,7 @@ function Home() {
         </div>
         <div className="col-md-6">
           <div className="simple-border">
-            <h6 className="fw-semibold">Manage presentations</h6>
+            <h6 className="text-center fw-semibold">Manage presentations</h6>
             <p className="small text-muted mb-2">Edit or present a deck you own</p>
             <div className="d-flex gap-2">
               <button
