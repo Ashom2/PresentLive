@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 /**
@@ -10,6 +11,11 @@ import { useNavigate } from 'react-router-dom';
  */
 function Home() {
   const navigate = useNavigate();
+  const [code, setCode] = useState('');
+
+  function handleJoin() {
+    navigate('/join', { state: { code: code.trim() } });
+  }
 
   return (
     <div className="page-box">
@@ -24,10 +30,13 @@ function Home() {
               <input
                 className="form-control form-control-sm"
                 placeholder="e.g. presentlive/example-deck"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
               />
               <button
                 className="btn btn-sm btn-primary"
-                onClick={() => navigate('/audience')}
+                onClick={handleJoin}
               >
                 Join
               </button>

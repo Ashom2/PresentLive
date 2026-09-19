@@ -5,6 +5,7 @@ import PresentationManager from './components/PresentationManager';
 import DeckEditor from './components/DeckEditor';
 import DeckPresenter from './components/DeckPresenter';
 import DeckAudience from './components/DeckAudience';
+import Join from './components/Join';
 
 /**
  * The root component of the React Chef application.
@@ -22,7 +23,7 @@ import DeckAudience from './components/DeckAudience';
 function App() {
   const navLinks = [
     { path: '/decks', text: 'My presentations' },
-    { path: '/', text: 'Join' },
+    { path: '/join', text: 'Join' },
   ];
 
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/decks/:id/editor" element={<DeckEditor />} />
             <Route path="/decks/:id/presenter" element={<DeckPresenter />} />
             <Route path="/decks/:id/audience" element={<DeckAudience />} />
+            <Route path="/join" element={<Join />} />
           </Routes>
         </div>
       </div>
