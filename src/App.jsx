@@ -2,7 +2,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
 import PresentationManager from './components/PresentationManager';
-import { decks } from './data/decks';
+import DeckEditor from './components/DeckEditor';
+import DeckPresenter from './components/DeckPresenter';
+import DeckAudience from './components/DeckAudience';
 
 /**
  * The root component of the React Chef application.
@@ -19,7 +21,7 @@ import { decks } from './data/decks';
  */
 function App() {
   const navLinks = [
-    { path: '/presentations', text: 'My presentations' },
+    { path: '/decks', text: 'My presentations' },
     { path: '/', text: 'Join' },
   ];
 
@@ -30,7 +32,10 @@ function App() {
         <div className="container mt-5">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/presentations" element={<PresentationManager decks={decks} />} />
+            <Route path="/decks" element={<PresentationManager />} />
+            <Route path="/decks/:id/editor" element={<DeckEditor />} />
+            <Route path="/decks/:id/presenter" element={<DeckPresenter />} />
+            <Route path="/decks/:id/audience" element={<DeckAudience />} />
           </Routes>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { decks } from '../data/decks';
 
 /**
  * Manage presentations page.
@@ -8,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
  * @component
  * @returns {JSX.Element} The manage presentations page.
  */
-function PresentationManager({ decks }) {
+function PresentationManager() {
   const navigate = useNavigate();
 
   return (
@@ -29,22 +30,22 @@ function PresentationManager({ decks }) {
         </button>
       </div>
       <div className="d-flex flex-column gap-2">
-        {decks.map((d, i) => (
+        {decks.map((deck, i) => (
           <div key={i} className="simple-border d-flex justify-content-between align-items-center">
             <div>
-              <span className="fw-semibold">{d.title}</span>
-              <span className="badge bg-light text-dark border ms-2">{d.status}</span>
+              <span className="fw-semibold">{deck.title}</span>
+              <span className="badge bg-light text-dark border ms-2">{deck.status}</span>
             </div>
             <div className="d-flex gap-1">
               <button
                 className="btn btn-sm btn-outline-primary"
-                onClick={() => navigate('/editor')}
+                onClick={() => navigate(`/decks/${deck.id}/editor`)}
               >
                 Edit
               </button>
               <button
                 className="btn btn-sm btn-outline-success"
-                onClick={() => navigate('/audience')}
+                onClick={() => navigate(`/decks/${deck.id}/presenter`)}
               >
                 Present
               </button>

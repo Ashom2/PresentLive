@@ -15,7 +15,7 @@ import { Link, useLocation } from 'react-router-dom';
  * <Header
  *   brandText="PresentLive"
  *   navLinks={[
- *     { text: 'My presentations', path: '/presentations' },
+ *     { text: 'My presentations', path: '/decks' },
  *     { text: 'Join', path: '/join' },
  *   ]}
  * />
