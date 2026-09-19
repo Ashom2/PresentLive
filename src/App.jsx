@@ -8,17 +8,16 @@ import DeckAudience from './components/DeckAudience';
 import Join from './components/Join';
 
 /**
- * The root component of the React Chef application.
+ * The root component of the PresentLive application.
  *
  * Sets up the main layout, including the header, navigation, and routes
- * for the Home, RecipeList, and Recipe pages. Uses React Router v6
- * for client-side routing.
+ * for the pages. Uses React Router v6 for client-side routing.
  *
  * @component
  * @example
  * return <App />;
  *
- * @returns {JSX.Element} The rendered React Chef app.
+ * @returns {JSX.Element} The rendered PresentLive app.
  */
 function App() {
   const navLinks = [
