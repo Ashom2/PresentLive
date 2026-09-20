@@ -7,6 +7,7 @@ import DeckPresenter from './components/DeckPresenter';
 import DeckAudience from './components/DeckAudience';
 import Join from './components/Join';
 import NewDeck from './components/NewDeck';
+import Admin from './components/Admin';
 
 /**
  * The root component of the PresentLive application.
@@ -24,7 +25,7 @@ function App() {
   const navLinks = [
     { path: '/decks', text: 'My presentations' },
     { path: '/join', text: 'Join' },
-  ];
+  ]
 
   return (
     <Router>
@@ -38,6 +39,7 @@ function App() {
           <Route path="/decks/:id/audience" element={<DeckAudience />} />
           <Route path="/join" element={<Join />} />
           <Route path="/decks/create" element={<NewDeck />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>
     </Router>
