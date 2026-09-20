@@ -5,8 +5,8 @@ import PresentationManager from './pages/DeckManager';
 import DeckEditor from './pages/DeckEditor';
 import DeckPresenter from './pages/DeckPresenter';
 import DeckAudience from './pages/DeckAudience';
+import DeckCreate from './pages/DeckCreate';
 import Join from './pages/Join';
-import NewDeck from './pages/NewDeck';
 import Admin from './pages/Admin';
 
 /**
@@ -38,7 +38,7 @@ function App() {
           <Route path="/decks/:id/presenter" element={<DeckPresenter />} />
           <Route path="/decks/:id/audience" element={<DeckAudience />} />
           <Route path="/join" element={<Join />} />
-          <Route path="/decks/create" element={<NewDeck />} />
+          <Route path="/decks/create" element={<DeckCreate />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>

@@ -11,7 +11,7 @@ import { decks } from '../data/decks';
  * @component
  * @returns {JSX.Element} The new deck page.
  */
-function NewDeck() {
+function DeckCreate() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [mode, setMode] = useState('blank'); // 'blank' | 'upload'
@@ -131,4 +131,4 @@ function NewDeck() {
   );
 }
 
-export default NewDeck;
+export default DeckCreate;
