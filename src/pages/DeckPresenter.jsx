@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { decks } from '../data/decks';
+import { getPresentationAndSlides } from '../api/client';
+import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
 
 /**
@@ -14,29 +15,29 @@ import SlideDisplay from '../components/SlideDisplay';
 function DeckPresenter() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const deck = decks.find((d) => d.id === id);
 
-  const [currentSlide, setCurrentSlide] = useState(2);
+  const { data: presentation, loading, error } = useApi(
+    () => getPresentationAndSlides(id),
+    [id]
+  );
 
-  if (!deck) return <p>Deck not found.</p>;
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const slides = [
-    { markdown: '## Title\nWelcome to COMP2140' },
-    { markdown: '## About Me\n- Name\n- Role\n- Background' },
-    {
-      markdown:
-        '## How familiar are you with JavaScript?\n- [ ] Not familiar\n- [ ] Beginner\n- [ ] Intermediate\n- [ ] Advanced',
-    },
-    { markdown: '## Tools\n- VS Code\n- Node.js\n- Git' },
-  ];
+  if (loading) return <p>Loading…</p>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
+  if (!presentation) return <p>Presentation not found.</p>;
 
+  const slides = Array.isArray(presentation.slides) ? presentation.slides : [];
+  const safeIndex = slides.length ? Math.min(currentSlide, slides.length - 1) : 0;
+
+  // Mock poll results until the API exposes them.
   const options = ['Not familiar', 'Beginner', 'Intermediate', 'Advanced'];
   const counts = [2, 5, 8, 3];
   const total = counts.reduce((a, b) => a + b, 0);
 
   return (
     <div className="page-box">
-      <div className="page-title text-center h4">Presenter view — {deck.title}</div>
+      <div className="page-title text-center h4">Presenter view — {presentation.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
           className="btn btn-outline-secondary"
@@ -46,13 +47,17 @@ function DeckPresenter() {
         </button>
       </div>
 
-      <SlideDisplay
-        markdown={slides[currentSlide].markdown}
-        index={currentSlide}
-        total={slides.length}
-        onPrev={() => setCurrentSlide((i) => Math.max(0, i - 1))}
-        onNext={() => setCurrentSlide((i) => Math.min(slides.length - 1, i + 1))}
-      />
+      {slides.length > 0 ? (
+        <SlideDisplay
+          markdown={slides[safeIndex].body}
+          index={safeIndex}
+          total={slides.length}
+          onPrev={() => setCurrentSlide((i) => Math.max(0, i - 1))}
+          onNext={() => setCurrentSlide((i) => Math.min(slides.length - 1, i + 1))}
+        />
+      ) : (
+        <p className="text-muted">No slides to present yet.</p>
+      )}
 
       <div className="simple-border mt-3">
         <div className="fw-semibold mb-2">Live results · {total} responses</div>
