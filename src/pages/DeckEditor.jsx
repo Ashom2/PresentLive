@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { decks } from '../data/decks';
+import { getPresentation } from '../api/client';
+import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
 
 /**
  * Slide editor page.
  *
- * Shows the deck's slides, a poll editor, and a presentMD preview.
+ * Fetches the presentation by id and shows its slides.
  *
  * @component
  * @returns {JSX.Element} The slide editor page.
@@ -14,19 +15,30 @@ import SlideDisplay from '../components/SlideDisplay';
 function DeckEditor() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const deck = decks.find((d) => d.id === id);
-  const [currentSlide, setCurrentSlide] = useState(2);
+
+  const { data: deck, loading, error } = useApi(
+    () => getPresentation(id),
+    [id]
+  );
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  if (loading) return <p>Loading…</p>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
+  if (!deck) return <p>Deck not found.</p>;
+
+  // Mock slides until the API returns real ones.
   const slides = [
     { markdown: '## Title\nWelcome to COMP2140' },
     { markdown: '## About Me\n- Name\n- Role\n- Background' },
     { markdown: '## Poll slide!' },
   ];
 
-  if (!deck) return <p>Deck not found.</p>;
+  const safeIndex = Math.min(currentSlide, slides.length - 1);
 
   return (
     <div className="page-box">
-      <div className="page-title text-center h4">Slide editor - {deck.title}</div>
+      <div className="page-title text-center h4">Slide editor — {deck.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
           className="btn btn-outline-secondary"
@@ -49,15 +61,16 @@ function DeckEditor() {
           <div className="simple-border">
             <div className="fw-semibold mb-2">Slides</div>
             <div className="d-flex flex-column gap-1">
-              <div className="p-1 bg-light rounded">
-                1. Title <span className="badge bg-secondary">Content</span>
-              </div>
-              <div className="p-1 bg-light rounded">
-                2. About Me <span className="badge bg-secondary">Content</span>
-              </div>
-              <div className="p-1 bg-light rounded border border-warning">
-                3. Poll: Experience <span className="badge bg-warning text-dark">Poll</span>
-              </div>
+              {slides.map((_, i) => (
+                <div
+                  key={i}
+                  className={`p-1 rounded ${i === safeIndex ? 'border border-warning bg-light' : 'bg-light'}`}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setCurrentSlide(i)}
+                >
+                  {i + 1}. {slides[i].markdown.split('\n')[0].replace(/^##\s*/, '')}
+                </div>
+              ))}
             </div>
             <button className="btn btn-outline-secondary mt-2 w-100">
               + Add slide
@@ -66,9 +79,9 @@ function DeckEditor() {
         </div>
         <div className="col-md-8">
           <div className="fw-semibold mb-2">Slide preview</div>
-          <SlideDisplay 
-            markdown={slides[currentSlide].markdown} 
-            index={currentSlide}
+          <SlideDisplay
+            markdown={slides[safeIndex].markdown}
+            index={safeIndex}
             total={slides.length}
             onPrev={() => setCurrentSlide((i) => Math.max(0, i - 1))}
             onNext={() => setCurrentSlide((i) => Math.min(slides.length - 1, i + 1))}
