@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApi } from '../hooks/useApi'
 import { getPresentations } from '../api/client';
 
 /**
@@ -12,30 +12,12 @@ import { getPresentations } from '../api/client';
  */
 function PresentationManager() {
   const navigate = useNavigate();
-  const [decks, setDecks] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const response = await getPresentations();
-        if (!cancelled) setDecks(response.data);
-      } catch (err) {
-        if (!cancelled) setError(err.message ?? 'Could not load presentations.');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    load();
-    return () => { cancelled = true; };
-  }, []);
+  const { data, loading, error } = useApi(getPresentations);
 
   if (loading) return <p>Loading…</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
+
+  const decks = data?.data ?? [];
 
   return (
     <div className="page-box">
