@@ -26,16 +26,16 @@ function DeckAudience() {
       <div className="page-title text-center h4">Audience view — {deck.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
-          className="btn btn-sm btn-outline-secondary"
+          className="btn btn-outline-secondary"
           onClick={() => navigate('/')}
         >
           ← Exit presentation
         </button>
-        <span className="small text-muted">Slide 3 of 4 · Display name: Anonymous</span>
+        <span className="text-muted">Slide 3 of 4 · Display name: Anonymous</span>
       </div>
 
       <div className="simple-border mb-3">
-        <h6 className="fw-semibold">How familiar are you with JavaScript?</h6>
+        <div className="fw-semibold">How familiar are you with JavaScript?</div>
         {options.map((opt, i) => (
           <div key={i} className="form-check">
             <input
@@ -52,19 +52,19 @@ function DeckAudience() {
           </div>
         ))}
         <button
-          className="btn btn-sm btn-primary mt-2"
+          className="btn btn-primary mt-2"
           disabled={selected === null}
         >
           Submit answer
         </button>
         {selected !== null && (
-          <span className="ms-2 small text-success">submitted (cannot change)</span>
+          <span className="ms-2 text-success">submitted (cannot change)</span>
         )}
       </div>
 
       <div className="simple-border">
         <div className="fw-semibold mb-2">Live results</div>
-        <div className="small text-muted">
+        <div className="text-muted">
           Results will appear here after you submit.
         </div>
       </div>

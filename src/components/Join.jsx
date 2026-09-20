@@ -55,9 +55,9 @@ function Join() {
     <div className="page-box">
       <div className="page-title text-center h4">Join a presentation</div>
       <div className="mb-3">
-        <label className="form-label small fw-semibold">Presentation link or code</label>
+        <label className="form-label fw-semibold">Presentation link or code</label>
         <input
-          className="form-control form-control-sm"
+          className="form-control"
           placeholder="e.g. intro-comp2140"
           value={code}
           onChange={(e) => setCode(e.target.value)}
@@ -65,9 +65,9 @@ function Join() {
       </div>
 
       <div className="mb-3">
-        <label className="form-label small fw-semibold">Your name</label>
+        <label className="form-label fw-semibold">Your name</label>
         <input
-          className="form-control form-control-sm"
+          className="form-control"
           placeholder="e.g. John Smith"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -77,7 +77,7 @@ function Join() {
 
       {error && <div className="alert alert-danger py-2 small">{error}</div>}
 
-      <button className="btn btn-sm btn-primary" onClick={handleJoin}>
+      <button className="btn btn-primary" onClick={handleJoin}>
         Join
       </button>
     </div>

@@ -64,9 +64,9 @@ function NewDeck() {
       <div className="page-title text-center h4">New presentation</div>
 
       <div className="mb-3">
-        <label className="form-label small fw-semibold">Presentation title</label>
+        <label className="form-label fw-semibold">Presentation title</label>
         <input
-          className="form-control form-control-sm"
+          className="form-control"
           placeholder="e.g. The Industrial Revolution and its Consequences"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -75,8 +75,7 @@ function NewDeck() {
       </div>
 
       <div className="mb-3">
-        <div className="small fw-semibold mb-2">Starting point</div>
-
+        <div className="fw-semibold mb-2">Starting point</div>
         <div className="form-check">
           <input
             className="form-check-input"
@@ -107,7 +106,7 @@ function NewDeck() {
 
         {mode === 'upload' && (
           <input
-            className="form-control form-control-sm"
+            className="form-control"
             type="file"
             accept=".md,text/markdown"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
@@ -115,16 +114,16 @@ function NewDeck() {
         )}
       </div>
 
-      {error && <div className="alert alert-danger py-2 small">{error}</div>}
+      {error && <div className="alert alert-danger py-2">{error}</div>}
 
       <div className="d-flex gap-2">
         <button
-          className="btn btn-sm btn-outline-secondary"
+          className="btn btn-outline-secondary"
           onClick={() => navigate('/decks')}
         >
           Cancel
         </button>
-        <button className="btn btn-sm btn-primary" onClick={handleCreate}>
+        <button className="btn btn-primary" onClick={handleCreate}>
           Create presentation
         </button>
       </div>

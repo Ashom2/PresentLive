@@ -25,7 +25,7 @@ function DeckPresenter() {
       <div className="page-title text-center h4">Presenter view - {deck.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
-          className="btn btn-sm btn-outline-secondary"
+          className="btn btn-outline-secondary"
           onClick={() => navigate('/decks')}
         >
           ← Back to presentations

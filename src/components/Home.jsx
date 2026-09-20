@@ -24,18 +24,18 @@ function Home() {
       <div className="row g-3">
         <div className="col-md-6">
           <div className="simple-border">
-            <h6 className="text-center fw-semibold">Join a presentation</h6>
-            <p className="small text-muted mb-2">Enter the presentation link or code</p>
+            <div className="text-center fw-semibold">Join a presentation</div>
+            <div className="text-muted mb-2">Enter the presentation link or code</div>
             <div className="input-group mb-2">
               <input
-                className="form-control form-control-sm"
+                className="form-control"
                 placeholder="e.g. presentlive/example-deck"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
               />
               <button
-                className="btn btn-sm btn-primary"
+                className="btn btn-primary"
                 onClick={handleJoin}
               >
                 Join
@@ -45,17 +45,17 @@ function Home() {
         </div>
         <div className="col-md-6">
           <div className="simple-border">
-            <h6 className="text-center fw-semibold">Manage presentations</h6>
-            <p className="small text-muted mb-2">Edit or present a deck you own</p>
+            <div className="text-center fw-semibold">Manage presentations</div>
+            <div className="text-muted mb-2">Edit or present a deck you own</div>
             <div className="d-flex gap-2">
               <button
-                className="btn btn-sm btn-outline-primary"
+                className="btn btn-outline-primary"
                 onClick={() => navigate('/decks')}
               >
                 My presentations
               </button>
               <button
-                className="btn btn-sm btn-primary"
+                className="btn btn-primary"
                 onClick={() => navigate('decks/create')}
               >
                 + New presentation

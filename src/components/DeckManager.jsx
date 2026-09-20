@@ -17,13 +17,13 @@ function PresentationManager() {
       <div className="page-title text-center h4">My presentations</div>
       <div className="d-flex justify-content-between mb-3">
         <button
-          className="btn btn-sm btn-outline-secondary"
+          className="btn btn-outline-secondary"
           onClick={() => navigate('/')}
         >
           ← Home
         </button>
         <button
-          className="btn btn-sm btn-primary"
+          className="btn btn-primary"
           onClick={() => navigate('/decks/create')}
         >
           + New presentation
@@ -38,13 +38,13 @@ function PresentationManager() {
             </div>
             <div className="d-flex gap-1">
               <button
-                className="btn btn-sm btn-outline-primary"
+                className="btn btn-outline-primary"
                 onClick={() => navigate(`/decks/${deck.id}/editor`)}
               >
                 Edit
               </button>
               <button
-                className="btn btn-sm btn-outline-success"
+                className="btn btn-outline-success"
                 onClick={() => navigate(`/decks/${deck.id}/presenter`)}
               >
                 Present
