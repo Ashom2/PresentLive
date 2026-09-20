@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ApiTestButton from './ApiTestButton';
+import ApiTestButton from '../components/ApiTestButton';
 import { fetchData, createPresentation, getPresentations } from '../api/client';
 
 /**

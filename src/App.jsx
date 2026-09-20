@@ -1,13 +1,13 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import Home from './components/Home';
-import PresentationManager from './components/DeckManager';
-import DeckEditor from './components/DeckEditor';
-import DeckPresenter from './components/DeckPresenter';
+import Home from './pages/Home';
+import PresentationManager from './pages/DeckManager';
+import DeckEditor from './pages/DeckEditor';
+import DeckPresenter from './pages/DeckPresenter';
 import DeckAudience from './components/DeckAudience';
-import Join from './components/Join';
-import NewDeck from './components/NewDeck';
-import Admin from './components/Admin';
+import Join from './pages/Join';
+import NewDeck from './pages/NewDeck';
+import Admin from './pages/Admin';
 
 /**
  * The root component of the PresentLive application.

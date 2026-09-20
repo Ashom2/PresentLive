@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { decks } from '../data/decks';
-import SlideDisplay from './SlideDisplay';
+import SlideDisplay from '../components/SlideDisplay';
 
 /**
  * Slide editor page.
