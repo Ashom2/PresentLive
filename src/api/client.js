@@ -1,51 +1,39 @@
-export async function fetchData() {
-  const response = await fetch('https://comp2140-3ea651da.uqcloud.net/api', {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${import.meta.env.VITE_API_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  const data = await response.json();
-  return data;
-}
+const BASE_URL = 'https://comp2140-3ea651da.uqcloud.net/api';
 
 /**
- * Creates a new presentation on the server.
+ * Makes an authenticated JSON request to the API. Written by DeepSeek AI.
  *
- * @param {Object} presentation - The presentation fields (title, description, presenterName, status).
- * @returns {Promise<Object>} The created presentation, including its server-assigned id.
+ * @param {string} path - Path relative to the API base URL.
+ * @param {Object} [options]
+ * @param {string} [options.method='GET']
+ * @param {Object} [options.body] - Serialized as JSON if provided.
+ * @returns {Promise<any>} Parsed JSON response, or null for 204.
  */
-export async function createPresentation(presentation) {
-  const response = await fetch('https://comp2140-3ea651da.uqcloud.net/api/presentation', {
-    method: 'POST',
+async function request(path, { method = 'GET', body } = {}) {
+  const response = await fetch(`${BASE_URL}${path}`, {
+    method,
     headers: {
       Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}`,
-      'Content-Type': 'application/json',
+      ...(body !== undefined && { 'Content-Type': 'application/json' }),
     },
-    body: JSON.stringify(presentation),
+    ...(body !== undefined && { body: JSON.stringify(body) }),
   });
 
-  if (!response.ok) {
-    throw new Error(`Create failed: ${response.status}`);
-  }
+  if (response.status === 204) return null;
 
-  return response.json();
-}
-
-export async function getPresentations() {
-  const response = await fetch('https://comp2140-3ea651da.uqcloud.net/api/presentation', {
-    method: 'GET',
-    headers: {
-      Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}`,
-      'Content-Type': 'application/json',
-    },
-  });
+  const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(`Create failed: ${response.status}`);
+    throw new Error(payload?.error ?? `Request failed: ${response.status}`);
   }
 
-  return response.json();
+  return payload;
 }
+
+
+export const fetchData = () => request('');
+export const getPresentations = () => request('/presentation');
+export const getPresentation  = (id) => request(`/presentation/${id}`);
+export const createPresentation = (data) => request('/presentation', { method: 'POST', body: data });
+export const updatePresentation = (id, data) => request(`/presentation/${id}`, { method: 'PATCH', body: data });
+export const deletePresentation = (id) => request(`/presentation/${id}`, { method: 'DELETE' });

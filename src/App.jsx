@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import PresentationManager from './pages/DeckManager';
 import DeckEditor from './pages/DeckEditor';
 import DeckPresenter from './pages/DeckPresenter';
-import DeckAudience from './components/DeckAudience';
+import DeckAudience from './pages/DeckAudience';
 import Join from './pages/Join';
 import NewDeck from './pages/NewDeck';
 import Admin from './pages/Admin';

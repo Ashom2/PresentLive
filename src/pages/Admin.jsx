@@ -15,16 +15,6 @@ function Admin() {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
 
-  async function handleClick() {
-    createPresentation({
-        title: "title",
-        author: "unknown",
-        status: "Draft",
-        shared: false,
-        closed: true,
-    })
-  }
-
   return (
     <div className="page-box">
       <h1 className='text-center'>Admin Page</h1>
