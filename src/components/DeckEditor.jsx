@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { decks } from '../data/decks';
+import SlideDisplay from './SlideDisplay';
 
 /**
  * Slide editor page.
@@ -9,10 +11,16 @@ import { decks } from '../data/decks';
  * @component
  * @returns {JSX.Element} The slide editor page.
  */
-function Editor() {
+function DeckEditor() {
   const navigate = useNavigate();
   const { id } = useParams();
   const deck = decks.find((d) => d.id === id);
+  const [currentSlide, setCurrentSlide] = useState(2);
+  const slides = [
+    { markdown: '## Title\nWelcome to COMP2140' },
+    { markdown: '## About Me\n- Name\n- Role\n- Background' },
+    { markdown: '## Poll slide!' },
+  ];
 
   if (!deck) return <p>Deck not found.</p>;
 
@@ -57,6 +65,15 @@ function Editor() {
           </div>
         </div>
         <div className="col-md-8">
+          <div className="fw-semibold mb-2">Slide preview</div>
+          <SlideDisplay 
+            markdown={slides[currentSlide].markdown} 
+            index={currentSlide}
+            total={slides.length}
+            onPrev={() => setCurrentSlide((i) => Math.max(0, i - 1))}
+            onNext={() => setCurrentSlide((i) => Math.min(slides.length - 1, i + 1))}
+          />
+          <div className="fw-semibold mb-2">Poll preview</div>
           <div className="simple-border mb-2">
             <label className="fw-semibold">Question</label>
             <input
@@ -72,28 +89,10 @@ function Editor() {
               <div>• Advanced</div>
             </div>
           </div>
-          <div className="simple-border bg-light">
-            <div className="text-muted mb-1">presentMD preview</div>
-            <div>
-              <span className="text-secondary">##</span> How familiar are you with JavaScript?
-            </div>
-            <div>
-              <span className="text-secondary">- [ ]</span> Not familiar
-            </div>
-            <div>
-              <span className="text-secondary">- [ ]</span> Beginner
-            </div>
-            <div>
-              <span className="text-secondary">- [ ]</span> Intermediate
-            </div>
-            <div>
-              <span className="text-secondary">- [ ]</span> Advanced
-            </div>
-          </div>
         </div>
       </div>
     </div>
   );
 }
 
-export default Editor;
+export default DeckEditor;
