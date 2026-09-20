@@ -1,23 +1,16 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPresentation } from '../api/client';
+import { getPresentationAndSlides } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
+import AddSlideButton from '../components/AddSlideButton';
 
-/**
- * Slide editor page.
- *
- * Fetches the presentation by id and shows its slides.
- *
- * @component
- * @returns {JSX.Element} The slide editor page.
- */
 function DeckEditor() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const { data: deck, loading, error } = useApi(
-    () => getPresentation(id),
+  const { data: presentation, loading, error, refetch } = useApi(
+    () => getPresentationAndSlides(id),
     [id]
   );
 
@@ -25,20 +18,20 @@ function DeckEditor() {
 
   if (loading) return <p>Loading…</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
-  if (!deck) return <p>Deck not found.</p>;
+  if (!presentation) return <p>Presentation not found.</p>;
 
-  // Mock slides until the API returns real ones.
-  const slides = [
-    { markdown: '## Title\nWelcome to COMP2140' },
-    { markdown: '## About Me\n- Name\n- Role\n- Background' },
-    { markdown: '## Poll slide!' },
-  ];
+  const slides = Array.isArray(presentation.slides) ? presentation.slides : [];
+  const safeIndex = slides.length ? Math.min(currentSlide, slides.length - 1) : 0;
 
-  const safeIndex = Math.min(currentSlide, slides.length - 1);
+  async function handleAdded() {
+    const previousLength = slides.length;
+    await refetch();
+    setCurrentSlide(previousLength);
+  }
 
   return (
     <div className="page-box">
-      <div className="page-title text-center h4">Slide editor — {deck.title}</div>
+      <div className="page-title text-center h4">Slide editor — {presentation.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
           className="btn btn-outline-secondary"
@@ -50,7 +43,7 @@ function DeckEditor() {
           <button className="btn btn-outline-primary">Save</button>
           <button
             className="btn btn-outline-success"
-            onClick={() => navigate(`/decks/${deck.id}/presenter`)}
+            onClick={() => navigate(`/decks/${presentation.id}/presenter`)}
           >
             Present
           </button>
@@ -61,31 +54,37 @@ function DeckEditor() {
           <div className="simple-border">
             <div className="fw-semibold mb-2">Slides</div>
             <div className="d-flex flex-column gap-1">
-              {slides.map((_, i) => (
+              {slides.map((slide, i) => (
                 <div
-                  key={i}
+                  key={slide.id ?? i}
                   className={`p-1 rounded ${i === safeIndex ? 'border border-warning bg-light' : 'bg-light'}`}
                   style={{ cursor: 'pointer' }}
                   onClick={() => setCurrentSlide(i)}
                 >
-                  {i + 1}. {slides[i].markdown.split('\n')[0].replace(/^##\s*/, '')}
+                  {i + 1}. {slide.title}
                 </div>
               ))}
             </div>
-            <button className="btn btn-outline-secondary mt-2 w-100">
-              + Add slide
-            </button>
+            <AddSlideButton
+              presentationId={id}
+              position={slides.length}
+              onAdded={handleAdded}
+            />
           </div>
         </div>
         <div className="col-md-8">
           <div className="fw-semibold mb-2">Slide preview</div>
-          <SlideDisplay
-            markdown={slides[safeIndex].markdown}
-            index={safeIndex}
-            total={slides.length}
-            onPrev={() => setCurrentSlide((i) => Math.max(0, i - 1))}
-            onNext={() => setCurrentSlide((i) => Math.min(slides.length - 1, i + 1))}
-          />
+          {slides.length > 0 ? (
+            <SlideDisplay
+              markdown={slides[safeIndex].body}
+              index={safeIndex}
+              total={slides.length}
+              onPrev={() => setCurrentSlide((i) => Math.max(0, i - 1))}
+              onNext={() => setCurrentSlide((i) => Math.min(slides.length - 1, i + 1))}
+            />
+          ) : (
+            <p className="text-muted">No slides yet. Add one to get started.</p>
+          )}
           <div className="fw-semibold mb-2">Poll preview</div>
           <div className="simple-border mb-2">
             <label className="fw-semibold">Question</label>

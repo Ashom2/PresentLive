@@ -9,7 +9,7 @@ const BASE_URL = 'https://comp2140-3ea651da.uqcloud.net/api';
  * @param {Object} [options.body] - Serialized as JSON if provided.
  * @returns {Promise<any>} Parsed JSON response, or null for 204.
  */
-async function request(path, { method = 'GET', body } = {}) {
+async function request(path, { method = 'GET', body } = {}) {  
   const response = await fetch(`${BASE_URL}${path}`, {
     method,
     headers: {
@@ -24,7 +24,8 @@ async function request(path, { method = 'GET', body } = {}) {
   const payload = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(payload?.error ?? `Request failed: ${response.status}`);
+    const detail = payload?.details?.join(', ');
+    throw new Error(detail ?? payload?.error ?? `Request failed: ${response.status}`);
   }
 
   return payload;
@@ -37,3 +38,54 @@ export const getPresentation  = (id) => request(`/presentation/${id}`);
 export const createPresentation = (data) => request('/presentation', { method: 'POST', body: data });
 export const updatePresentation = (id, data) => request(`/presentation/${id}`, { method: 'PATCH', body: data });
 export const deletePresentation = (id) => request(`/presentation/${id}`, { method: 'DELETE' });
+
+
+
+export const getSlide = (id) => request(`/slide/${id}`);
+
+/**
+ * Creates a slide and appends it to the presentation's slides array.
+ *
+ * @param {Object} slide
+ * @param {string} slide.presentation_id
+ * @param {string} slide.title
+ * @param {string} slide.body
+ * @param {string} slide.type - 'Content' or 'Poll'.
+ * @param {number} slide.position
+ * @param {Object} slide.poll - { question, options }.
+ * @returns {Promise<Object>} The created slide, including its id.
+ */
+export async function createSlide(slide) {
+  // Create the slide entity
+  const created = await request('/slide', { method: 'POST', body: slide });
+
+  // Append the slide's id to the presentation's slides array
+  const presentation = await request(`/presentation/${slide.presentation_id}`);
+  const existingIds = Array.isArray(presentation.slides) ? presentation.slides : [];
+
+  await request(`/presentation/${slide.presentation_id}`, {
+    method: 'PATCH',
+    body: { slides: [...existingIds, created.id] },
+  });
+
+  return created;
+}
+
+export const getPresentationAndSlides = async (id) => {
+  const response = await request(`/presentation/${id}`);
+  const presentation = response?.data ?? response;
+
+  const slideIds = Array.isArray(presentation.slides) ? presentation.slides : [];
+  const slides = await Promise.all(slideIds.map((sid) => getSlide(sid)));
+
+  return { ...presentation, slides };
+};
+
+export const updateSlide = (slideId, slide) =>
+  request(`/slide/${slideId}`, {
+    method: 'PATCH',
+    body: slide,
+  });
+
+export const deleteSlide = (slideId) =>
+  request(`/slide/${slideId}`, { method: 'DELETE' });
