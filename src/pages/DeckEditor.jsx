@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPresentationAndSlides } from '../api/client';
+import { getPresentationAndSlides, deleteSlide } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
-import AddSlideButton from '../components/AddSlideButton';
+import SlideList from '../components/SlideList';
 
 function DeckEditor() {
   const navigate = useNavigate();
@@ -29,6 +29,20 @@ function DeckEditor() {
     setCurrentSlide(previousLength);
   }
 
+  async function handleDeleteSlide(slide) {
+    if (!window.confirm(`Delete "${slide.title}"? This can't be undone.`)) {
+      return;
+    }
+
+    try {
+      await deleteSlide(slide.id, id);
+      await refetch();
+      setCurrentSlide((i) => Math.max(0, i - 1));
+    } catch (err) {
+      console.error('Delete slide failed:', err);
+    }
+  }
+
   return (
     <div className="page-box">
       <div className="page-title text-center h4">Slide editor - {presentation.title}</div>
@@ -51,26 +65,14 @@ function DeckEditor() {
       </div>
       <div className="row g-3">
         <div className="col-md-4">
-          <div className="simple-border">
-            <div className="fw-semibold mb-2">Slides</div>
-            <div className="d-flex flex-column gap-1">
-              {slides.map((slide, i) => (
-                <div
-                  key={slide.id ?? i}
-                  className={`p-1 rounded ${i === safeIndex ? 'border border-warning bg-light' : 'bg-light'}`}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => setCurrentSlide(i)}
-                >
-                  {i + 1}. {slide.title}
-                </div>
-              ))}
-            </div>
-            <AddSlideButton
-              presentationId={id}
-              position={slides.length}
-              onAdded={handleAdded}
-            />
-          </div>
+          <SlideList
+            slides={slides}
+            currentIndex={safeIndex}
+            onSelect={setCurrentSlide}
+            onDelete={handleDeleteSlide}
+            presentationId={id}
+            onAdded={handleAdded}
+          />
         </div>
         <div className="col-md-8">
           <div className="fw-semibold mb-2">Slide preview</div>

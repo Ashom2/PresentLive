@@ -87,5 +87,24 @@ export const updateSlide = (slideId, slide) =>
     body: slide,
   });
 
-export const deleteSlide = (slideId) =>
-  request(`/slide/${slideId}`, { method: 'DELETE' });
+/**
+ * Deletes a slide and removes its id from the presentation's slides array.
+ *
+ * @param {string} slideId - Id of the slide to delete.
+ * @param {string} presentationId - Id of the owning presentation.
+ * @returns {Promise<void>}
+ */
+export async function deleteSlide(slideId, presentationId) {
+  await request(`/slide/${slideId}`, { method: 'DELETE' });
+
+  const response = await request(`/presentation/${presentationId}`);
+  const deck = response?.data ?? response;
+  const remaining = (Array.isArray(deck.slides) ? deck.slides : []).filter(
+    (sid) => sid !== slideId
+  );
+
+  await request(`/presentation/${presentationId}`, {
+    method: 'PATCH',
+    body: { slides: remaining },
+  });
+}
