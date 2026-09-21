@@ -31,7 +31,7 @@ function DeckEditor() {
 
   return (
     <div className="page-box">
-      <div className="page-title text-center h4">Slide editor — {presentation.title}</div>
+      <div className="page-title text-center h4">Slide editor - {presentation.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
           className="btn btn-outline-secondary"

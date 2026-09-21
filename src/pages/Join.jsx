@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { decks } from '../data/decks';
+import { getPresentation } from '../api/client';
 
 /**
  * Join page.
  *
- * Lets an audience member enter a deck code and display name, then joins
- * the deck's audience view if it's open.
+ * Lets an audience member enter a presentation code and display name, then joins
+ * the presentation's audience view if it's open.
  *
  * @component
  * @returns {JSX.Element} The join page.
@@ -18,8 +18,9 @@ function Join() {
   const [code, setCode] = useState(location.state?.code ?? '');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [checking, setChecking] = useState(false);
 
-  function handleJoin() {
+  async function handleJoin() {
     setError('');
 
     const trimmed = code.trim();
@@ -32,23 +33,34 @@ function Join() {
       return;
     }
 
+    // Accept bare ids or paths like /presentation/abc or /presentation/abc/presenter.
     const id = trimmed.split('/').filter(Boolean).pop();
-    const deck = decks.find((d) => d.id === id);
 
-    if (!deck) {
+    setChecking(true);
+    try {
+      const response = await getPresentation(id);
+      const presentation = response?.data ?? response;
+
+      if (!presentation) {
+        setError('No presentation found for that code.');
+        return;
+      }
+      if (!presentation.shared) {
+        setError('This presentation is not shared yet.');
+        return;
+      }
+      if (presentation.closed) {
+        setError('This presentation has been closed.');
+        return;
+      }
+
+      navigate(`/decks/${presentation.id}/audience`, { state: { displayName: name.trim() } });
+    } catch (err) {
+      // getPresentation throws on 404, network failure, etc.
       setError('No presentation found for that code.');
-      return;
+    } finally {
+      setChecking(false);
     }
-    if (!deck.shared) {
-      setError('This presentation is not shared yet.');
-      return;
-    }
-    if (deck.closed) {
-      setError('This presentation has been closed.');
-      return;
-    }
-
-    navigate(`/decks/${deck.id}/audience`, { state: { displayName: name.trim() } });
   }
 
   return (
@@ -77,8 +89,12 @@ function Join() {
 
       {error && <div className="alert alert-danger py-2 small">{error}</div>}
 
-      <button className="btn btn-primary" onClick={handleJoin}>
-        Join
+      <button
+        className="btn btn-primary"
+        onClick={handleJoin}
+        disabled={checking}
+      >
+        {checking ? 'Checking…' : 'Join'}
       </button>
     </div>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { decks } from '../data/decks';
+import { createPresentation } from '../api/client';
 
 /**
  * New deck page.
@@ -17,8 +17,9 @@ function DeckCreate() {
   const [mode, setMode] = useState('blank'); // 'blank' | 'upload'
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
 
-  function handleCreate() {
+  async function handleCreate() {
     setError('');
 
     if (!title.trim()) {
@@ -30,33 +31,24 @@ function DeckCreate() {
       return;
     }
 
-    // Mock: build an id from the title. In a real app this would come
-    // from the server, and the file's contents would become the slides.
-    const id = title
-      .trim()
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
+    setSaving(true);
+    try {
+      const created = await createPresentation({
+        title: title.trim(),
+        author: 'You',
+        status: 'Draft',
+        shared: false,
+        closed: false,
+        slides: [],
+      });
 
-    if (decks.some((d) => d.id === id)) {
-      setError('A presentation with that title already exists.');
-      return;
+      const deck = created?.data ?? created;
+      navigate(`/decks/${deck.id}/editor`);
+    } catch (err) {
+      setError(err.message ?? 'Could not create the presentation.');
+    } finally {
+      setSaving(false);
     }
-
-    const newDeck = {
-      id,
-      title: title.trim(),
-      author: 'You',
-      status: 'Draft',
-      shared: false,
-      closed: false,
-    };
-
-    // Mock: push into the in-memory list so the editor can find it.
-    // In a real app this would be a POST to your API.
-    decks.push(newDeck);
-
-    navigate(`/decks/${id}/editor`);
   }
 
   return (
@@ -71,6 +63,7 @@ function DeckCreate() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
+          disabled={saving}
         />
       </div>
 
@@ -84,6 +77,7 @@ function DeckCreate() {
             id="mode-blank"
             checked={mode === 'blank'}
             onChange={() => setMode('blank')}
+            disabled={saving}
           />
           <label className="form-check-label" htmlFor="mode-blank">
             Start blank
@@ -98,6 +92,7 @@ function DeckCreate() {
             id="mode-upload"
             checked={mode === 'upload'}
             onChange={() => setMode('upload')}
+            disabled={saving}
           />
           <label className="form-check-label" htmlFor="mode-upload">
             Upload a .md file
@@ -110,6 +105,7 @@ function DeckCreate() {
             type="file"
             accept=".md,text/markdown"
             onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            disabled={saving}
           />
         )}
       </div>
@@ -120,11 +116,16 @@ function DeckCreate() {
         <button
           className="btn btn-outline-secondary"
           onClick={() => navigate('/decks')}
+          disabled={saving}
         >
           Cancel
         </button>
-        <button className="btn btn-primary" onClick={handleCreate}>
-          Create presentation
+        <button
+          className="btn btn-primary"
+          onClick={handleCreate}
+          disabled={saving}
+        >
+          {saving ? 'Creating…' : 'Create presentation'}
         </button>
       </div>
     </div>
