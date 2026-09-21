@@ -1,0 +1,97 @@
+import { useEffect, useState } from 'react';
+import SectionCard from './SectionCard';
+
+/**
+ * Displays a poll question with options, letting the user pick one and submit.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Object} props.slide - The poll slide to display.
+ * @param {Function} props.onSubmit - Called with the selected option index.
+ * @param {boolean} [props.disabled] - Disables interaction (e.g. already answered).
+ * @returns {JSX.Element} The poll view.
+ */
+function PollView({ slide, onSubmit, disabled = false }) {
+  const question = slide.poll?.question ?? '';
+  const options = Array.isArray(slide.poll?.options) ? slide.poll.options : [];
+
+  const [selected, setSelected] = useState(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Reset when the slide changes.
+  useEffect(() => {
+    setSelected(null);
+    setSubmitted(false);
+    setError(null);
+  }, [slide.id]);
+
+  async function handleSubmit() {
+    if (selected === null) return;
+
+    setSubmitting(true);
+    setError(null);
+    try {
+      await onSubmit(selected);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.message ?? 'Could not submit your answer.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  if (options.length === 0) {
+    return (
+      <SectionCard title="Poll" className="mb-2">
+        <p className="text-muted mb-0">This poll has no options yet.</p>
+      </SectionCard>
+    );
+  }
+
+  return (
+    <SectionCard title="Poll" className="mb-2">
+      <div className="fw-semibold">{question}</div>
+
+      <div className="d-flex flex-column gap-1">
+        {options.map((opt, i) => (
+          <div className="form-check" key={i}>
+            <input
+              className="form-check-input"
+              type="radio"
+              name={`poll-${slide.id}`}
+              id={`poll-${slide.id}-opt-${i}`}
+              checked={selected === i}
+              onChange={() => setSelected(i)}
+              disabled={disabled || submitted || submitting}
+            />
+            <label
+              className="form-check-label"
+              htmlFor={`poll-${slide.id}-opt-${i}`}
+            >
+              {opt}
+            </label>
+          </div>
+        ))}
+      </div>
+
+      <div className="d-flex align-items-center gap-2">
+        <button
+          className="btn btn-sm btn-primary"
+          onClick={handleSubmit}
+          disabled={selected === null || disabled || submitted || submitting}
+        >
+          {submitting ? 'Submitting…' : 'Submit answer'}
+        </button>
+        {submitted && (
+          <span className="small text-success">Submitted — cannot be changed</span>
+        )}
+      </div>
+
+      {error && <div className="alert alert-danger py-2 small mb-0">{error}</div>}
+    </SectionCard>
+  );
+}
+
+export default PollView;

@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getPresentationAndSlides } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
+import PollView from '../components/PollView';
 
 /**
  * Audience view for a deck.
@@ -50,6 +51,14 @@ function DeckAudience() {
     setCurrentSlide((i) => Math.min(slides.length - 1, i + 1));
   }
 
+  async function handlePollSubmit(optionIndex) {
+    await submitPollResponse({
+      slide_id: currentSlideData.id,
+      attendee_name: displayName,
+      option_index: optionIndex,
+    });
+  }
+
   return (
     <div className="page-box">
       <div className="page-title text-center h4">Audience view - {presentation.title}</div>
@@ -76,35 +85,10 @@ function DeckAudience() {
           />
 
           {isPoll && (
-            <div className="simple-border mt-3">
-              <div className="fw-semibold mb-2">
-                {currentSlideData.poll?.question || currentSlideData.title}
-              </div>
-              {options.map((opt, i) => (
-                <div key={i} className="form-check">
-                  <input
-                    className="form-check-input"
-                    type="radio"
-                    name="poll"
-                    id={`opt${i}`}
-                    checked={selected === i}
-                    onChange={() => setSelected(i)}
-                  />
-                  <label className="form-check-label" htmlFor={`opt${i}`}>
-                    {opt}
-                  </label>
-                </div>
-              ))}
-              <button
-                className="btn btn-primary mt-2"
-                disabled={selected === null}
-              >
-                Submit answer
-              </button>
-              {selected !== null && (
-                <span className="ms-2 text-success">submitted (cannot change)</span>
-              )}
-            </div>
+            <PollView
+              slide={currentSlideData}
+              onSubmit={handlePollSubmit}
+            />
           )}
         </>
       )}

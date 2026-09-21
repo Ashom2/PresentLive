@@ -12,7 +12,7 @@
  */
 function SlideDisplay({ markdown, index, total, onPrev, onNext }) {
   return (
-    <div className="simple-border bg-light p-0">
+    <div className="simple-border bg-light p-0 mb-2">
       <div className="bg-secondary bg-opacity-10 border-top d-flex justify-content-between align-items-center p-3">
         <button
           className="btn btn-sm btn-outline-secondary"
