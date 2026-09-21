@@ -46,10 +46,6 @@ function DeckEditor() {
     }
   }
 
-  async function handleStatusChanged() {
-    await refetch();
-  }
-
   function confirmNavigation() {
     if (!editorDirty) return true;
     return window.confirm('You have unsaved changes. Leave anyway?');

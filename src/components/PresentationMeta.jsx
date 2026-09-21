@@ -19,6 +19,7 @@ function PresentationMeta({ presentation, onChanged }) {
   const [author, setAuthor] = useState(presentation.author ?? '');
   const [savingTitle, setSavingTitle] = useState(false);
   const [savingAuthor, setSavingAuthor] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Keep local state in sync if the deck is refetched with new values.
   useEffect(() => {
@@ -52,9 +53,16 @@ function PresentationMeta({ presentation, onChanged }) {
     }
   }
 
+  function handleCopy() {
+    navigator.clipboard.writeText(presentation.id).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  }
+
   return (
     <SectionCard title="Presentation Meta" className="mb-2">
-      <div className="d-flex align-items-center gap-2">
+      <div className="d-flex align-items-center">
         <label className="fw-semibold" style={{ minWidth: '4rem' }}>Title</label>
         <input
           className="form-control form-control-sm"
@@ -66,7 +74,7 @@ function PresentationMeta({ presentation, onChanged }) {
         />
       </div>
 
-      <div className="d-flex align-items-center gap-2">
+      <div className="d-flex align-items-center">
         <label className="fw-semibold" style={{ minWidth: '4rem' }}>Author</label>
         <input
           className="form-control form-control-sm"
@@ -78,7 +86,7 @@ function PresentationMeta({ presentation, onChanged }) {
         />
       </div>
 
-      <div className="d-flex align-items-center gap-2">
+      <div className="d-flex align-items-center">
         <label className="fw-semibold" style={{ minWidth: '4rem' }}>Status</label>
         <StatusDropdown
           presentationId={presentation.id}
@@ -86,6 +94,27 @@ function PresentationMeta({ presentation, onChanged }) {
           onChanged={onChanged}
         />
       </div>
+
+      {presentation.status === 'Published' && (
+        <div className="d-flex align-items-center">
+          <label className="fw-semibold" style={{ minWidth: '4rem' }}>Code</label>
+          <div className="input-group input-group-sm">
+            <input
+              className="form-control form-control-sm font-monospace"
+              value={presentation.id}
+              readOnly
+              onFocus={(e) => e.target.select()}
+            />
+            <button
+              className="btn btn-outline-secondary"
+              onClick={handleCopy}
+              title="Copy ID to clipboard"
+            >
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
+        </div>
+      )}
     </SectionCard>
   );
 }
