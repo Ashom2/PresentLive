@@ -66,7 +66,6 @@ function DeckEditor() {
           ← Back to presentations
         </button>
         <div className="d-flex gap-1">
-          <button className="btn btn-outline-primary">Save</button>
           <button
             className="btn btn-outline-success"
             onClick={() => { if (confirmNavigation()) navigate(`/decks/${presentation.id}/presenter`);}}
