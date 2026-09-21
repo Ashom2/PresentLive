@@ -148,3 +148,24 @@ export async function deleteSlide(slideId, presentationId) {
     body: { slides: remaining },
   });
 }
+
+
+
+export async function registerAttendee(name, presentation) { 
+  // Create the attendee entity
+  const created = await request('/attendee', { method: 'POST', body: {
+    name: name,
+    status: "Viewing",
+  }});
+
+  // Append the attendee's id to the presentation's attendees array
+  // const presentation = await request(`/presentation/${presentation_id}`);
+  const existingIds = Array.isArray(presentation.attendees) ? presentation.attendees : [];
+
+  await request(`/presentation/${presentation.id}`, {
+    method: 'PATCH',
+    body: { attendees: [...existingIds, created.id] },
+  });
+
+  return created;
+}

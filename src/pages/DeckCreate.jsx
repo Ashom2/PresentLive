@@ -38,6 +38,7 @@ function DeckCreate() {
         author: 'You',
         status: 'Draft',
         slides: [],
+        attendees: [],
       });
 
       const deck = created?.data ?? created;

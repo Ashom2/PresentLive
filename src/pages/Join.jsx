@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getPresentation } from '../api/client';
+import { getPresentation, registerAttendee } from '../api/client';
 
 /**
  * Join page.
@@ -20,6 +20,8 @@ function Join() {
   const [error, setError] = useState('');
   const [checking, setChecking] = useState(false);
 
+  //TODO since there are multiple client functions here can we move this
+  //function to client?
   async function handleJoin() {
     setError('');
 
@@ -50,7 +52,13 @@ function Join() {
         return;
       }
 
-      navigate(`/decks/${presentation.id}/audience`, { state: { displayName: name.trim() } });
+      console.log("presentation found");
+
+      const attendee = await registerAttendee(name.trim(), presentation);
+
+      navigate(`/decks/${presentation.id}/audience`, { 
+        state: { displayName: attendee.name, attendeeId: attendee.id } 
+      });
     } catch (err) {
       // getPresentation throws on 404, network failure, etc.
       setError('No presentation found for that code.');
@@ -73,7 +81,7 @@ function Join() {
       </div>
 
       <div className="mb-3">
-        <label className="form-label fw-semibold">Your name</label>
+        <label className="form-label fw-semibold">Display name</label>
         <input
           className="form-control"
           placeholder="e.g. John Smith"
