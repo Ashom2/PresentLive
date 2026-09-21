@@ -26,12 +26,12 @@ function PresentationMeta({ presentation, onChanged }) {
   }, [presentation.id, presentation.title, presentation.author]);
 
   async function saveTitle() {
-    const next = title.trim();
-    if (!next || next === presentation.title) return;
+    const trimmedTitle = title.trim();
+    if (!trimmedTitle || trimmedTitle === presentation.title) return;
 
     setSavingTitle(true);
     try {
-      await updatePresentationTitle(presentation.id, next);
+      await updatePresentationTitle(presentation.id, trimmedTitle);
       await onChanged();
     } finally {
       setSavingTitle(false);
@@ -39,12 +39,12 @@ function PresentationMeta({ presentation, onChanged }) {
   }
 
   async function saveAuthor() {
-    const next = author.trim();
-    if (!next || next === presentation.author) return;
+    const trimmedAuthor = author.trim();
+    if (!trimmedAuthor || trimmedAuthor === presentation.author) return;
 
     setSavingAuthor(true);
     try {
-      await updatePresentationAuthor(presentation.id, next);
+      await updatePresentationAuthor(presentation.id, trimmedAuthor);
       await onChanged();
     } finally {
       setSavingAuthor(false);

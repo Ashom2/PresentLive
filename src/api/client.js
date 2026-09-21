@@ -1,7 +1,8 @@
 const BASE_URL = 'https://comp2140-3ea651da.uqcloud.net/api';
 
 /**
- * Makes an authenticated JSON request to the API. Written by DeepSeek AI.
+ * Makes an authenticated JSON request to the API.
+ * Written by DeepSeek AI.
  *
  * @param {string} path - Path relative to the API base URL.
  * @param {Object} [options]
@@ -113,10 +114,17 @@ export const getPresentationAndSlides = async (id) => {
   return { ...presentation, slides };
 };
 
-export const updateSlide = (slideId, slide) =>
+/**
+ * Updates a slide's fields.
+ *
+ * @param {string} slideId - Id of the slide to update.
+ * @param {Object} patch - Fields to update (e.g. { title, body }).
+ * @returns {Promise<Object>} The updated slide.
+ */
+export const updateSlide = (slideId, patch) =>
   request(`/slide/${slideId}`, {
     method: 'PATCH',
-    body: slide,
+    body: patch,
   });
 
 /**

@@ -5,6 +5,7 @@ import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
 import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
+import SlideEditor from '../components/SlideEditor'
 
 function DeckEditor() {
   const navigate = useNavigate();
@@ -81,34 +82,15 @@ function DeckEditor() {
           />
         </div>
         <div className="col-md-8">
-          <div className="fw-semibold mb-2">Slide preview</div>
           {slides.length > 0 ? (
-            <SlideDisplay
-              markdown={slides[safeIndex].body}
-              index={safeIndex}
-              total={slides.length}
-              onPrev={() => setCurrentSlide((i) => Math.max(0, i - 1))}
-              onNext={() => setCurrentSlide((i) => Math.min(slides.length - 1, i + 1))}
+            <SlideEditor
+              key={slides[safeIndex].id}
+              slide={slides[safeIndex]}
+              onChanged={refetch}
             />
           ) : (
             <p className="text-muted">No slides yet. Add one to get started.</p>
           )}
-          <div className="fw-semibold mb-2">Poll preview</div>
-          <div className="simple-border mb-2">
-            <label className="fw-semibold">Question</label>
-            <input
-              className="form-control mb-2"
-              value="How familiar are you with JavaScript?"
-              readOnly
-            />
-            <label className="fw-semibold">Options</label>
-            <div className="small">
-              <div>• Not familiar</div>
-              <div>• Beginner</div>
-              <div>• Intermediate</div>
-              <div>• Advanced</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
