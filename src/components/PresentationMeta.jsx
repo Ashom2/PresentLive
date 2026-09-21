@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import StatusDropdown from './StatusDropdown';
 import { updatePresentationTitle, updatePresentationAuthor } from '../api/client';
+import SectionCard from './SectionCard';
 
 /**
  * Editable title, author, and status for a presentation.
@@ -52,7 +53,7 @@ function PresentationMeta({ presentation, onChanged }) {
   }
 
   return (
-    <div className="simple-border mb-2 d-flex flex-column gap-2">
+    <SectionCard title="Presentation Meta" className="mb-2">
       <div className="d-flex align-items-center gap-2">
         <label className="fw-semibold" style={{ minWidth: '4rem' }}>Title</label>
         <input
@@ -85,7 +86,7 @@ function PresentationMeta({ presentation, onChanged }) {
           onChanged={onChanged}
         />
       </div>
-    </div>
+    </SectionCard>
   );
 }
 

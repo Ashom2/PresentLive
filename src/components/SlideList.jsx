@@ -1,4 +1,6 @@
 import AddSlideButton from './AddSlideButton';
+import SectionCard from './SectionCard';
+
 
 /**
  * Lists a deck's slides with the current one highlighted, an add button,
@@ -16,8 +18,7 @@ import AddSlideButton from './AddSlideButton';
  */
 function SlideList({ slides, currentIndex, onSelect, onDelete, presentationId, onAdded }) {
   return (
-    <div className="simple-border">
-      <div className="fw-semibold mb-2">Slides</div>
+    <SectionCard title="Slides" className="mb-2">
       <div className="d-flex flex-column gap-1">
         {slides.map((slide, i) => (
           <div
@@ -47,7 +48,7 @@ function SlideList({ slides, currentIndex, onSelect, onDelete, presentationId, o
         position={slides.length}
         onAdded={onAdded}
       />
-    </div>
+    </SectionCard>
   );
 }
 
