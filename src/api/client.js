@@ -42,6 +42,26 @@ export const deletePresentation = (id) => request(`/presentation/${id}`, { metho
 
 
 /**
+ * Updates a presentation's title.
+ *
+ * @param {string} id - Presentation id.
+ * @param {string} title - The new title.
+ * @returns {Promise<Object>} The updated presentation.
+ */
+export const updatePresentationTitle = (id, title) =>
+  request(`/presentation/${id}`, { method: 'PATCH', body: { title } });
+
+/**
+ * Updates a presentation's author.
+ *
+ * @param {string} id - Presentation id.
+ * @param {string} author - The new author.
+ * @returns {Promise<Object>} The updated presentation.
+ */
+export const updatePresentationAuthor = (id, author) =>
+  request(`/presentation/${id}`, { method: 'PATCH', body: { author } });
+
+/**
  * Updates a presentation's status.
  *
  * @param {string} id - Presentation id.

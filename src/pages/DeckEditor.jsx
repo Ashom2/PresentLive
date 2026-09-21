@@ -4,7 +4,7 @@ import { getPresentationAndSlides, deleteSlide } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
 import SlideList from '../components/SlideList';
-import StatusDropdown from '../components/StatusDropdown';
+import PresentationMeta from '../components/PresentationMeta';
 
 function DeckEditor() {
   const navigate = useNavigate();
@@ -70,14 +70,7 @@ function DeckEditor() {
       </div>
       <div className="row g-3">
         <div className="col-md-4">
-          <div className="simple-border mb-2 d-flex align-items-center gap-2">
-            <div className="fw-semibold">Status</div>
-            <StatusDropdown
-              presentationId={id}
-              status={presentation.status}
-              onChanged={refetch}
-            />
-          </div>
+          <PresentationMeta presentation={presentation} onChanged={refetch} />
           <SlideList
             slides={slides}
             currentIndex={safeIndex}
