@@ -41,6 +41,18 @@ export const deletePresentation = (id) => request(`/presentation/${id}`, { metho
 
 
 
+/**
+ * Updates a presentation's status.
+ *
+ * @param {string} id - Presentation id.
+ * @param {string} status - 'Draft' or 'Published'.
+ * @returns {Promise<Object>} The updated presentation.
+ */
+export const updatePresentationStatus = (id, status) =>
+  request(`/presentation/${id}`, { method: 'PATCH', body: { status } });
+
+
+
 export const getSlide = (id) => request(`/slide/${id}`);
 
 /**

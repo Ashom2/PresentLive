@@ -4,6 +4,7 @@ import { getPresentationAndSlides, deleteSlide } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
 import SlideList from '../components/SlideList';
+import StatusDropdown from '../components/StatusDropdown';
 
 function DeckEditor() {
   const navigate = useNavigate();
@@ -43,6 +44,10 @@ function DeckEditor() {
     }
   }
 
+  async function handleStatusChanged() {
+    await refetch();
+  }
+
   return (
     <div className="page-box">
       <div className="page-title text-center h4">Slide editor - {presentation.title}</div>
@@ -65,6 +70,14 @@ function DeckEditor() {
       </div>
       <div className="row g-3">
         <div className="col-md-4">
+          <div className="simple-border mb-2 d-flex align-items-center gap-2">
+            <div className="fw-semibold">Status</div>
+            <StatusDropdown
+              presentationId={id}
+              status={presentation.status}
+              onChanged={refetch}
+            />
+          </div>
           <SlideList
             slides={slides}
             currentIndex={safeIndex}

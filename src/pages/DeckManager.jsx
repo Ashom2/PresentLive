@@ -41,7 +41,9 @@ function PresentationManager() {
           <div key={i} className="simple-border d-flex justify-content-between align-items-center">
             <div>
               <span className="fw-semibold">{deck.title}</span>
-              <span className="badge bg-light text-dark border ms-2">{deck.status}</span>
+              <span className={`badge ${deck.status === 'Published' ? 'bg-success' : 'bg-secondary'} ms-2`}>
+                {deck.status}
+              </span> 
             </div>
             <div className="d-flex gap-1">
               <button
