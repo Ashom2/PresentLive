@@ -37,8 +37,6 @@ function DeckCreate() {
         title: title.trim(),
         author: 'You',
         status: 'Draft',
-        shared: false,
-        closed: false,
         slides: [],
       });
 

@@ -28,8 +28,6 @@ function Admin() {
             title: 'Test deck', 
             author: "unknown",
             status: "Draft",
-            shared: false,
-            closed: true, 
         })}
         label="Create presentation"
         loadingLabel="Creating…"
