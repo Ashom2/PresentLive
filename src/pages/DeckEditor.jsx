@@ -10,6 +10,7 @@ import SlideEditor from '../components/SlideEditor'
 function DeckEditor() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const [editorDirty, setEditorDirty] = useState(false);
 
   const { data: presentation, loading, error, refetch } = useApi(
     () => getPresentationAndSlides(id),
@@ -49,13 +50,18 @@ function DeckEditor() {
     await refetch();
   }
 
+  function confirmNavigation() {
+    if (!editorDirty) return true;
+    return window.confirm('You have unsaved changes. Leave anyway?');
+  }
+
   return (
     <div className="page-box">
       <div className="page-title text-center h4">Slide editor - {presentation.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
           className="btn btn-outline-secondary"
-          onClick={() => navigate('/decks')}
+          onClick={() => { if (confirmNavigation()) navigate('/decks'); }}
         >
           ← Back to presentations
         </button>
@@ -63,7 +69,7 @@ function DeckEditor() {
           <button className="btn btn-outline-primary">Save</button>
           <button
             className="btn btn-outline-success"
-            onClick={() => navigate(`/decks/${presentation.id}/presenter`)}
+            onClick={() => { if (confirmNavigation()) navigate(`/decks/${presentation.id}/presenter`);}}
           >
             Present
           </button>
@@ -75,7 +81,10 @@ function DeckEditor() {
           <SlideList
             slides={slides}
             currentIndex={safeIndex}
-            onSelect={setCurrentSlide}
+            onSelect={(i) => {
+              if (i === safeIndex) return;
+              if (confirmNavigation()) setCurrentSlide(i);
+            }}
             onDelete={handleDeleteSlide}
             presentationId={id}
             onAdded={handleAdded}
@@ -87,6 +96,7 @@ function DeckEditor() {
               key={slides[safeIndex].id}
               slide={slides[safeIndex]}
               onChanged={refetch}
+              onDirtyChange={setEditorDirty}
             />
           ) : (
             <p className="text-muted">No slides yet. Add one to get started.</p>
