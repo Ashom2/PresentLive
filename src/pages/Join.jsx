@@ -45,12 +45,8 @@ function Join() {
         setError('No presentation found for that code.');
         return;
       }
-      if (!presentation.shared) {
-        setError('This presentation is not shared yet.');
-        return;
-      }
-      if (presentation.closed) {
-        setError('This presentation has been closed.');
+      if (presentation.status != "Published") {
+        setError('This presentation is not published.');
         return;
       }
 
