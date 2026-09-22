@@ -14,7 +14,7 @@ import AttendanceDisplay from '../components/AttendanceDisplay';
  * @component
  * @returns {JSX.Element} The presenter page.
  */
-function DeckPresenter() {
+export default function DeckPresenter() {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -66,5 +66,3 @@ function DeckPresenter() {
     </div>
   );
 }
-
-export default DeckPresenter;

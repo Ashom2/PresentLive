@@ -15,7 +15,7 @@ import { getPollResults } from '../api/client';
  * @param {boolean} [props.showAttendees=false] - Show each response with its attendee name.
  * @returns {JSX.Element} The poll results panel.
  */
-function PollResults({ slideId, title = 'Slide Poll Results', intervalMs, showAttendees = false }) {
+export default function PollResults({ slideId, title = 'Slide Poll Results', intervalMs, showAttendees = false }) {
   const { data: results, loading, error, refetch } = useApi(
     () => getPollResults(slideId),
     [slideId]
@@ -75,5 +75,3 @@ function PollResults({ slideId, title = 'Slide Poll Results', intervalMs, showAt
     </SectionCard>
   );
 }
-
-export default PollResults;

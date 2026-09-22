@@ -11,7 +11,7 @@ import { createSlide } from '../api/client';
  * @param {Function} props.onAdded - Called after creation and refetch.
  * @returns {JSX.Element} The add-slide button.
  */
-function AddSlideButton({ presentationId, position, onAdded }) {
+export default function AddSlideButton({ presentationId, position, onAdded }) {
   const [saving, setSaving] = useState(false);
 
   async function handleClick() {
@@ -34,5 +34,3 @@ function AddSlideButton({ presentationId, position, onAdded }) {
     </button>
   );
 }
-
-export default AddSlideButton;

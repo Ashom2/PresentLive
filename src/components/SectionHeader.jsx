@@ -6,12 +6,10 @@
  * @param {string} props.title - The section title.
  * @returns {JSX.Element} A shaded header bar.
  */
-function SectionHeader({ title }) {
+export default function SectionHeader({ title }) {
   return (
     <div className="bg-secondary bg-opacity-10 border-bottom px-3 py-2 fw-semibold text-uppercase text-secondary">
       {title}
     </div>
   );
 }
-
-export default SectionHeader;

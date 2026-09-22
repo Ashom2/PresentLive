@@ -11,7 +11,7 @@ import { getPresentation, createAttendee } from '../api/client';
  * @component
  * @returns {JSX.Element} The join page.
  */
-function Join() {
+export default function Join() {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -103,5 +103,3 @@ function Join() {
     </div>
   );
 }
-
-export default Join;

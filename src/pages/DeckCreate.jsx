@@ -11,7 +11,7 @@ import { createPresentation } from '../api/client';
  * @component
  * @returns {JSX.Element} The new deck page.
  */
-function DeckCreate() {
+export default function DeckCreate() {
   const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [mode, setMode] = useState('blank'); // 'blank' | 'upload'
@@ -122,5 +122,3 @@ function DeckCreate() {
     </div>
   );
 }
-
-export default DeckCreate;

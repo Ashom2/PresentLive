@@ -7,7 +7,7 @@ import PresentationMeta from '../components/PresentationMeta';
 import SlideEditor from '../components/SlideEditor'
 import DeleteButton from '../components/DeleteButton';
 
-function DeckEditor() {
+export default function DeckEditor() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [editorDirty, setEditorDirty] = useState(false);
@@ -109,5 +109,3 @@ function DeckEditor() {
     </div>
   );
 }
-
-export default DeckEditor;

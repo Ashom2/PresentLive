@@ -11,7 +11,7 @@ import SectionHeader from './SectionHeader';
  * @param {string} [props.bodyClassName='d-flex flex-column gap-2'] - Extra classes for the body.
  * @returns {JSX.Element} The section card.
  */
-function SectionCard({
+export default function SectionCard({
   title,
   children,
   className = '',
@@ -26,5 +26,3 @@ function SectionCard({
     </div>
   );
 }
-
-export default SectionCard;

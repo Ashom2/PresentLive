@@ -21,7 +21,7 @@ import Admin from './pages/Admin';
  *
  * @returns {JSX.Element} The rendered PresentLive app.
  */
-function App() {
+export default function App() {
   const navLinks = [
     { path: '/decks', text: 'My presentations' },
     { path: '/join', text: 'Join' },
@@ -45,5 +45,3 @@ function App() {
     </Router>
   );
 }
-
-export default App;

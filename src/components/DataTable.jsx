@@ -14,7 +14,7 @@ import SectionCard from './SectionCard';
  * @param {Function} [props.rowKey] - Unique key per row. Defaults to index.
  * @returns {JSX.Element} The table panel.
  */
-function DataTable({ fetcher, deps = [], columns, title, rowKey }) {
+export default function DataTable({ fetcher, deps = [], columns, title, rowKey }) {
   const navigate = useNavigate();
   const { data, loading, error } = useApi(fetcher, deps);
 
@@ -70,5 +70,3 @@ function DataTable({ fetcher, deps = [], columns, title, rowKey }) {
     </div>
   );
 }
-
-export default DataTable;

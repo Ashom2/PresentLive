@@ -10,7 +10,7 @@ import SectionCard from '../components/SectionCard';
  * @component
  * @returns {JSX.Element} The landing page content.
  */
-function Home() {
+export default function Home() {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
 
@@ -66,5 +66,3 @@ function Home() {
     </div>
   );
 }
-
-export default Home;

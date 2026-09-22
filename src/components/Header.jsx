@@ -20,7 +20,7 @@ import { Link, useLocation } from 'react-router-dom';
  *   ]}
  * />
  */
-function Header({ brandText, navLinks }) {
+export default function Header({ brandText, navLinks }) {
   const location = useLocation();
 
   return (
@@ -43,5 +43,3 @@ function Header({ brandText, navLinks }) {
     </nav>
   );
 }
-
-export default Header;

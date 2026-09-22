@@ -13,7 +13,7 @@ import SectionCard from './SectionCard';
  * @param {Function} [props.onDirtyChange] - Notifies parent when dirty state changes.
  * @returns {JSX.Element} The slide editor form.
  */
-function SlideEditor({ slide, onChanged, onDirtyChange }) {
+export default function SlideEditor({ slide, onChanged, onDirtyChange }) {
   const [title, setTitle] = useState(slide.title ?? '');
   const [body, setBody] = useState(slide.body ?? '');
   const [isPoll, setIsPoll] = useState(slide.type === 'Poll');
@@ -202,5 +202,3 @@ function SlideEditor({ slide, onChanged, onDirtyChange }) {
     </SectionCard>
   );
 }
-
-export default SlideEditor;

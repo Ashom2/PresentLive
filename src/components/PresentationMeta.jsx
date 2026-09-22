@@ -14,7 +14,7 @@ import SectionCard from './SectionCard';
  * @param {Function} props.onChanged - Called after any successful save.
  * @returns {JSX.Element} The metadata editor.
  */
-function PresentationMeta({ presentation, onChanged }) {
+export default function PresentationMeta({ presentation, onChanged }) {
   const [title, setTitle] = useState(presentation.title ?? '');
   const [author, setAuthor] = useState(presentation.author ?? '');
   const [savingTitle, setSavingTitle] = useState(false);
@@ -118,5 +118,3 @@ function PresentationMeta({ presentation, onChanged }) {
     </SectionCard>
   );
 }
-
-export default PresentationMeta;

@@ -16,7 +16,7 @@ import DeleteButton from './DeleteButton'
  * @param {Function} props.onAdded - Called after a slide is added.
  * @returns {JSX.Element} The slide list container.
  */
-function SlideList({ slides, currentIndex, onSelect, onDelete, presentationId, onAdded }) {
+export default function SlideList({ slides, currentIndex, onSelect, onDelete, presentationId, onAdded }) {
   return (
     <SectionCard title="Slides" className="mb-2">
       <div className="d-flex flex-column gap-1">
@@ -45,5 +45,3 @@ function SlideList({ slides, currentIndex, onSelect, onDelete, presentationId, o
     </SectionCard>
   );
 }
-
-export default SlideList;

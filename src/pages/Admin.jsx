@@ -14,7 +14,7 @@ import SectionCard from '../components/SectionCard';
  * @component
  * @returns {JSX.Element} The landing page content.
  */
-function Admin() {
+export default function Admin() {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
 
@@ -99,5 +99,3 @@ function Admin() {
     </div>
   );
 }
-
-export default Admin;

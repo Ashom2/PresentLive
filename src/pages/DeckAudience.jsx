@@ -13,7 +13,7 @@ import PollDisplay from '../components/PollDisplay';
  * @component
  * @returns {JSX.Element} The audience page.
  */
-function DeckAudience() {
+export default function DeckAudience() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
@@ -89,5 +89,3 @@ function DeckAudience() {
     </div>
   );
 }
-
-export default DeckAudience;

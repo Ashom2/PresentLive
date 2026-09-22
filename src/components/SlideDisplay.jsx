@@ -10,7 +10,7 @@
  * @param {Function} props.onNext - Called when the next button is clicked.
  * @returns {JSX.Element} The slide preview container with navigation.
  */
-function SlideDisplay({ markdown, index, total, onPrev, onNext }) {
+export default function SlideDisplay({ markdown, index, total, onPrev, onNext }) {
   return (
     <div className="simple-border bg-light p-0 mb-2">
       <div className="bg-secondary bg-opacity-10 border-top d-flex justify-content-between align-items-center p-3">
@@ -41,5 +41,3 @@ function SlideDisplay({ markdown, index, total, onPrev, onNext }) {
     </div>
   );
 }
-
-export default SlideDisplay;

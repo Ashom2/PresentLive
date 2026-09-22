@@ -10,7 +10,7 @@ import { useState } from 'react';
  * @param {string} [props.loadingLabel='Loading...'] - Button label while running.
  * @returns {JSX.Element} A button with status feedback.
  */
-function ApiTestButton({ action, label = 'Fetch data', loadingLabel = 'Loading...' }) {
+export default function ApiTestButton({ action, label = 'Fetch data', loadingLabel = 'Loading...' }) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);
@@ -52,5 +52,3 @@ function ApiTestButton({ action, label = 'Fetch data', loadingLabel = 'Loading..
     </div>
   );
 }
-
-export default ApiTestButton;

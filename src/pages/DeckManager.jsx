@@ -11,7 +11,7 @@ import DeleteButton from '../components/DeleteButton';
  * @component
  * @returns {JSX.Element} The manage presentations page.
  */
-function PresentationManager() {
+export default function PresentationManager() {
   const navigate = useNavigate();
 
   const { data: presentations, loading, error, refetch } = useApi(getAllPresentations);
@@ -73,5 +73,3 @@ function PresentationManager() {
     </div>
   );
 }
-
-export default PresentationManager;

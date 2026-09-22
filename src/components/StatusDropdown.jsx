@@ -11,7 +11,7 @@ import { updatePresentationStatus } from '../api/client';
  * @param {Function} props.onChanged - Called after a successful update.
  * @returns {JSX.Element} The status dropdown.
  */
-function StatusDropdown({ presentationId, status, onChanged }) {
+export default function StatusDropdown({ presentationId, status, onChanged }) {
   const [saving, setSaving] = useState(false);
 
   async function handleChange(e) {
@@ -41,5 +41,3 @@ function StatusDropdown({ presentationId, status, onChanged }) {
     </select>
   );
 }
-
-export default StatusDropdown;
