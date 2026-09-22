@@ -33,21 +33,31 @@ async function request(path, { method = 'GET', body } = {}) {
 }
 
 
-export const fetchData = () => request('');
-export const getPresentations = () => request('/presentation');
 
 
 // Presentations --------------------------------------------------------
-export const getPresentation  = (id) => request(`/presentation/${id}`);
+/**
+ * Fetches a single presentation by id.
+ *
+ * @param {string} id - Presentation id.
+ * @returns {Promise<Object>} The presentation.
+ */
+export const getPresentation = (id) => request(`/presentation/${id}`);
 /**
  * Updates a presentation's fields.
  *
  * @param {string} id - Id of the presentation to update.
- * @param {Object} patch - Fields to update (e.g. { title, author }).
+ * @param {Object} data - Fields to update (e.g. { title, author }).
  * @returns {Promise<Object>} The updated presentation.
  */
 export const updatePresentation = (id, data) => request(`/presentation/${id}`, { method: 'PATCH', body: data });
-
+/**
+ * Creates a new presentation.
+ *
+ * @param {string} title
+ * @param {string} [author='Unknown']
+ * @returns {Promise<Object>} The created presentation, with its server-assigned id.
+ */
 export const createPresentation = (title, author="Unknown") => {
   const body = {
     title: title.trim(),
@@ -85,12 +95,16 @@ export const updatePresentationAuthor = (id, author) =>
  */
 export const updatePresentationStatus = (id, status) =>
   updatePresentation(id, { status: status });
+/**
+ * Deletes a presentation and all of its slides.
+ *
+ * @param {string} id - Presentation id.
+ * @returns {Promise<void>}
+ */
 export async function deletePresentation(id) {
   const presentation = await getPresentation(id);
-  const responses = presentation.responses;
-
   // Delete all slides and their poll responses
-  await Promise.all(responses.map((responseId) => deleteSlideHelper(responseId)));
+  await Promise.all(presentation.slides.map((slideId) => deleteSlideHelper(slideId)));
   // Delete the presentation
   await request(`/presentation/${id}`, { method: 'DELETE' });
 }
@@ -98,12 +112,18 @@ export async function deletePresentation(id) {
 
 
 // Slides --------------------------------------------------------
+/**
+ * Fetches a single slide by id.
+ *
+ * @param {string} id - Slide id.
+ * @returns {Promise<Object>} The slide.
+ */
 export const getSlide = (id) => request(`/slide/${id}`);
 /**
  * Updates a slide's fields.
  *
  * @param {string} id - Id of the slide to update.
- * @param {Object} patch - Fields to update (e.g. { title, body }).
+ * @param {Object} data - Fields to update (e.g. { title, body }).
  * @returns {Promise<Object>} The updated slide.
  */
 export const updateSlide = (id, data) => request(`/slide/${id}`, { method: 'PATCH', body: data });
@@ -144,9 +164,11 @@ export async function deleteSlidePollResponses(slideId) {
   await Promise.all(responseIds.map((rid) => deletePollResponse(rid)));
 }
 /**
- * Updates a poll belonging to a slide, and deletes existing responses.
- * 
- * @param {string} slideId - Id of the slide's poll to delete
+ * Replaces a slide's poll question and options, deleting any existing responses.
+ *
+ * @param {string} slideId
+ * @param {string} question
+ * @param {string[]} options
  * @returns {Promise<void>}
  */
 export async function updateSlidePoll(slideId, question, options) {
@@ -194,16 +216,28 @@ export async function deleteSlide(slideId, presentationId) {
 
 
 // Attendees --------------------------------------------------------
+/**
+ * Fetches a single attendee by id.
+ *
+ * @param {string} id - Attendee id.
+ * @returns {Promise<Object>} The attendee.
+ */
 export const getAttendee = (id) => request(`/attendee/${id}`);
 /**
  * Updates an attendee's fields.
  *
  * @param {string} id - Id of the attendee to update.
- * @param {Object} patch - Fields to update (e.g. { name, status }).
+ * @param {Object} data - Fields to update (e.g. { name, status }).
  * @returns {Promise<Object>} The updated attendee.
  */
 export const updateAttendee = (id, data) => request(`/attendee/${id}`, { method: 'PATCH', body: data });
-
+/**
+ * Creates an attendee and appends their id to the presentation's attendees array.
+ *
+ * @param {string} name
+ * @param {Object} presentation - The presentation to join (needs .id and .attendees).
+ * @returns {Promise<Object>} The created attendee.
+ */
 export async function createAttendee(name, presentation) { 
   // Create the attendee entity
   const body = {
@@ -218,31 +252,52 @@ export async function createAttendee(name, presentation) {
 
   return attendee;
 }
-
-
+/**
+ * Fetches all attendees for a presentation.
+ *
+ * @param {string} presentationId - Presentation id.
+ * @returns {Promise<Array<Object>>} The presentation's attendees.
+ */
 export async function getPresentationAttendees(presentationId) {
-  const presentation = await getPresentation(id);
-  const attendeeIds = presentation.attendees;
+  const presentation = await getPresentation(presentationId);
   return await Promise.all(
-    attendeeIds.map((attendeeId) => getAttendee(attendeeId))
+    presentation.attendees.map((attendeeId) => getAttendee(attendeeId))
   );
 }
-
+/**
+ * Deletes an attendee.
+ *
+ * @param {string} id - Attendee id.
+ * @returns {Promise<void>}
+ */
 export const deleteAttendee = (id) => request(`/attendee/${id}`, { method: 'DELETE' });
 
 
 
 // Poll responses --------------------------------------------------------
+/**
+ * Fetches a single poll response by id.
+ *
+ * @param {string} id - Poll response id.
+ * @returns {Promise<Object>} The poll response.
+ */
 export const getPollResponse = (id) => request(`/poll_response/${id}`);
 /**
  * Updates a poll response's fields.
  *
  * @param {string} id - Id of the poll response to update.
- * @param {Object} patch - Fields to update (e.g. { attendee_id, option_index }).
+ * @param {Object} data - Fields to update (e.g. { attendee_id, option_index }).
  * @returns {Promise<Object>} The updated poll response.
  */
 export const updatePollResponse = (id, data) => request(`/poll_response/${id}`, { method: 'PATCH', body: data });
-
+/**
+ * Records an attendee's answer and appends the response id to the slide's poll.
+ *
+ * @param {string} slideId
+ * @param {string} attendeeId
+ * @param {number} optionIndex
+ * @returns {Promise<Object>} The created poll response.
+ */
 export async function submitPollResponse(slideId, attendeeId, optionIndex) {
   // Create the poll_response entity
   const response = await request('/poll_response', { method: 'POST', body: {
@@ -263,7 +318,12 @@ export async function submitPollResponse(slideId, attendeeId, optionIndex) {
 
   return response;
 }
-
+/**
+ * Fetches a poll slide's results, aggregated by option, with attendee names.
+ *
+ * @param {string} slideId
+ * @returns {Promise<{ options: string[], counts: number[], total: number, responses: Array<{ attendeeId, attendeeName, optionIndex }> }>}
+ */
 export async function getPollResults(slideId) {
   const slide = await getSlide(slideId);
 
@@ -295,17 +355,29 @@ export async function getPollResults(slideId) {
     responses 
   };
 }
-
+/**
+ * Deletes a poll response.
+ *
+ * @param {string} id - Poll response id.
+ * @returns {Promise<void>}
+ */
 export const deletePollResponse = (id) => request(`/poll_response/${id}`, { method: 'DELETE' });
 
 
 
 // Other functions --------------------------------------------------------
-export const getPresentationAndSlides = async (id) => {
+/**
+ * Fetches a presentation with its slides populated.
+ *
+ * @param {string} id
+ * @returns {Promise<Object>} The presentation with `slides: Array<Object>`.
+ */
+export async function getPresentationAndSlides(id) {
   const presentation = await getPresentation(id);
-
   const slideIds = Array.isArray(presentation.slides) ? presentation.slides : [];
   const slides = await Promise.all(slideIds.map((slideId) => getSlide(slideId)));
-
   return { ...presentation, slides };
-};
+}
+
+export const fetchData = () => request('');
+export const getPresentations = () => request('/presentation');
