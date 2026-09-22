@@ -17,14 +17,7 @@ function AddSlideButton({ presentationId, position, onAdded }) {
   async function handleClick() {
     setSaving(true);
     try {
-      await createSlide({
-        presentation_id: presentationId,
-        title: 'New slide',
-        body: '## New slide\nBody text here.',
-        type: 'Content',
-        position,
-        poll: { question: '', options: [], responses: [] },
-      });
+      await createSlide(presentationId, position);
       await onAdded();
     } finally {
       setSaving(false);

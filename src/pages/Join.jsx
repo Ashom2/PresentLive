@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getPresentation, registerAttendee } from '../api/client';
+import { getPresentation, createAttendee } from '../api/client';
 
 /**
  * Join page.
@@ -54,7 +54,7 @@ function Join() {
 
       console.log("presentation found");
 
-      const attendee = await registerAttendee(name.trim(), presentation);
+      const attendee = await createAttendee(name.trim(), presentation);
 
       navigate(`/decks/view/${presentation.id}`, {
         state: { attendeeName: attendee.name, attendeeId: attendee.id }

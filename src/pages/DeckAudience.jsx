@@ -26,7 +26,6 @@ function DeckAudience() {
     [id]
   );
 
-  const [selected, setSelected] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   if (loading) return <p>Loading...</p>;
@@ -37,18 +36,12 @@ function DeckAudience() {
   const safeIndex = slides.length ? Math.min(currentSlide, slides.length - 1) : 0;
   const currentSlideData = slides[safeIndex];
   const isPoll = currentSlideData?.type === 'Poll';
-  const options =
-    isPoll && Array.isArray(currentSlideData?.poll?.options)
-      ? currentSlideData.poll.options
-      : [];
 
   function goPrev() {
-    setSelected(null);
     setCurrentSlide((i) => Math.max(0, i - 1));
   }
 
   function goNext() {
-    setSelected(null);
     setCurrentSlide((i) => Math.min(slides.length - 1, i + 1));
   }
 

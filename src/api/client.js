@@ -35,12 +35,23 @@ async function request(path, { method = 'GET', body } = {}) {
 
 export const fetchData = () => request('');
 export const getPresentations = () => request('/presentation');
+
+
+// Presentations --------------------------------------------------------
 export const getPresentation  = (id) => request(`/presentation/${id}`);
-export const createPresentation = (data) => request('/presentation', { method: 'POST', body: data });
+/**
+ * Updates a presentation's fields.
+ *
+ * @param {string} id - Id of the presentation to update.
+ * @param {Object} patch - Fields to update (e.g. { title, author }).
+ * @returns {Promise<Object>} The updated presentation.
+ */
 export const updatePresentation = (id, data) => request(`/presentation/${id}`, { method: 'PATCH', body: data });
-export const deletePresentation = (id) => request(`/presentation/${id}`, { method: 'DELETE' });
 
-
+//TODO
+const createPresentation = (data) => request('/presentation', { method: 'POST', body: data });
+//TODO need to delete slides, attendees
+const deletePresentation = (id) => request(`/presentation/${id}`, { method: 'DELETE' });
 
 /**
  * Updates a presentation's title.
@@ -50,7 +61,7 @@ export const deletePresentation = (id) => request(`/presentation/${id}`, { metho
  * @returns {Promise<Object>} The updated presentation.
  */
 export const updatePresentationTitle = (id, title) =>
-  request(`/presentation/${id}`, { method: 'PATCH', body: { title } });
+  updatePresentation(id, { title: title });
 
 /**
  * Updates a presentation's author.
@@ -60,7 +71,7 @@ export const updatePresentationTitle = (id, title) =>
  * @returns {Promise<Object>} The updated presentation.
  */
 export const updatePresentationAuthor = (id, author) =>
-  request(`/presentation/${id}`, { method: 'PATCH', body: { author } });
+  updatePresentation(id, { author: author });
 
 /**
  * Updates a presentation's status.
@@ -70,12 +81,20 @@ export const updatePresentationAuthor = (id, author) =>
  * @returns {Promise<Object>} The updated presentation.
  */
 export const updatePresentationStatus = (id, status) =>
-  request(`/presentation/${id}`, { method: 'PATCH', body: { status } });
+  updatePresentation(id, { status: status });
 
 
 
+// Slides --------------------------------------------------------
 export const getSlide = (id) => request(`/slide/${id}`);
-
+/**
+ * Updates a slide's fields.
+ *
+ * @param {string} id - Id of the slide to update.
+ * @param {Object} patch - Fields to update (e.g. { title, body }).
+ * @returns {Promise<Object>} The updated slide.
+ */
+export const updateSlide = (id, data) => request(`/slide/${id}`, { method: 'PATCH', body: data });
 /**
  * Creates a slide and appends it to the presentation's slides array.
  *
@@ -88,44 +107,25 @@ export const getSlide = (id) => request(`/slide/${id}`);
  * @param {Object} slide.poll - { question, options }.
  * @returns {Promise<Object>} The created slide, including its id.
  */
-export async function createSlide(slide) {
+export async function createSlide(presentationId, position) {
   // Create the slide entity
-  const created = await request('/slide', { method: 'POST', body: slide });
+  const body = {
+    presentation_id: presentationId,
+    title: 'New slide',
+    body: '## New slide\nBody text here.',
+    type: 'Content',
+    position: position,
+    poll: { question: '', options: [], responses: [] },
+  };
+  const slide = await request('/slide', { method: 'POST', body: body });
 
   // Append the slide's id to the presentation's slides array
-  const presentation = await request(`/presentation/${slide.presentation_id}`);
+  const presentation = await getPresentation(presentationId);
   const existingIds = Array.isArray(presentation.slides) ? presentation.slides : [];
-  await request(`/presentation/${slide.presentation_id}`, {
-    method: 'PATCH',
-    body: { slides: [...existingIds, created.id] },
-  });
+  await updatePresentation(presentationId, { slides: [...existingIds, slide.id] });
 
-  return created;
+  return slide;
 }
-
-export const getPresentationAndSlides = async (id) => {
-  const response = await request(`/presentation/${id}`);
-  const presentation = response?.data ?? response;
-
-  const slideIds = Array.isArray(presentation.slides) ? presentation.slides : [];
-  const slides = await Promise.all(slideIds.map((sid) => getSlide(sid)));
-
-  return { ...presentation, slides };
-};
-
-/**
- * Updates a slide's fields.
- *
- * @param {string} slideId - Id of the slide to update.
- * @param {Object} patch - Fields to update (e.g. { title, body }).
- * @returns {Promise<Object>} The updated slide.
- */
-export const updateSlide = (slideId, patch) =>
-  request(`/slide/${slideId}`, {
-    method: 'PATCH',
-    body: patch,
-  });
-
 /**
  * Deletes a slide and removes its id from the presentation's slides array.
  *
@@ -136,78 +136,95 @@ export const updateSlide = (slideId, patch) =>
 export async function deleteSlide(slideId, presentationId) {
   await request(`/slide/${slideId}`, { method: 'DELETE' });
 
-  const response = await request(`/presentation/${presentationId}`);
-  const deck = response?.data ?? response;
-  const remaining = (Array.isArray(deck.slides) ? deck.slides : []).filter(
-    (sid) => sid !== slideId
+  const presentation = await getPresentation(presentationId);
+  const remaining = (Array.isArray(presentation.slides) ? presentation.slides : []).filter(
+    (id) => id !== slideId
   );
 
-  await request(`/presentation/${presentationId}`, {
-    method: 'PATCH',
-    body: { slides: remaining },
-  });
+  await updatePresentation(presentationId, { slides: remaining });
 }
 
 
 
-export async function registerAttendee(name, presentation) { 
+// Attendees --------------------------------------------------------
+export const getAttendee = (id) => request(`/attendee/${id}`);
+/**
+ * Updates an attendee's fields.
+ *
+ * @param {string} id - Id of the attendee to update.
+ * @param {Object} patch - Fields to update (e.g. { name, status }).
+ * @returns {Promise<Object>} The updated attendee.
+ */
+export const updateAttendee = (id, data) => request(`/attendee/${id}`, { method: 'PATCH', body: data });
+
+export async function createAttendee(name, presentation) { 
   // Create the attendee entity
-  const created = await request('/attendee', { method: 'POST', body: {
+  const body = {
     name: name,
     status: "Viewing",
-  }});
+  }
+  const created = await request('/attendee', { method: 'POST', body: body });
 
   // Append the attendee's id to the presentation's attendees array
   const existingIds = Array.isArray(presentation.attendees) ? presentation.attendees : [];
-  await request(`/presentation/${presentation.id}`, {
-    method: 'PATCH',
-    body: { attendees: [...existingIds, created.id] },
-  });
+  await updatePresentation(presentation.id, { attendees: [...existingIds, created.id] });
 
   return created;
 }
+//TODO
+//delete attendee
+//TODO would this require deleting their responses too?
+export const deleteAttendee = (id) => request(`/attendee/${id}`, { method: 'DELETE' });
 
 
+
+// Poll responses --------------------------------------------------------
+export const getPollResponse = (id) => request(`/poll_response/${id}`);
+/**
+ * Updates a poll response's fields.
+ *
+ * @param {string} id - Id of the poll response to update.
+ * @param {Object} patch - Fields to update (e.g. { attendee_id, option_index }).
+ * @returns {Promise<Object>} The updated poll response.
+ */
+export const updatePollResponse = (id, data) => request(`/poll_response/${id}`, { method: 'PATCH', body: data });
 
 export async function submitPollResponse(slideId, attendeeId, optionIndex) {
   // Create the poll_response entity
-  const created = await request('/poll_response', { method: 'POST', body: {
+  const response = await request('/poll_response', { method: 'POST', body: {
     attendee_id: attendeeId,
     option_index: optionIndex,
   }});
 
   // Append the poll_response's id to the slides's responses array within the poll JSON field
-  const slide = await request(`/slide/${slideId}`);
+  const slide = await getSlide(slideId);
   const existingPoll = slide.poll;
   const existingIds = Array.isArray(existingPoll.responses) ? existingPoll.responses : [];
-  await request(`/slide/${slideId}`, {
-    method: 'PATCH',
-    body: {
-      poll: {
-        ...existingPoll,
-        responses: [...existingIds, created.id] 
-      }
-    },
+  await updateSlide(slideId, {
+    poll: {
+      ...existingPoll,
+      responses: [...existingIds, response.id] 
+    }
   });
 
-  return created;
+  return response;
 }
 
 export async function getPollResults(slideId) {
-  const slide = await request(`/slide/${slideId}`);
+  const slide = await getSlide(slideId);
 
   const options = Array.isArray(slide?.poll?.options) ? slide.poll.options : [];
   const responseIds = Array.isArray(slide?.poll?.responses) ? slide.poll.responses : [];
 
   // Fetch each poll response entity.
   const responseEntities = await Promise.all(
-    responseIds.map((rid) => request(`/poll_response/${rid}`).then((r) => r?.data ?? r))
+    responseIds.map((rid) => request(`/poll_response/${rid}`))
   );
 
   // Fetch each attendee, deduplicated by id.
   const attendeeIds = [...new Set(responseEntities.map((r) => r?.attendee_id).filter(Boolean))];
   const attendeeEntities = await Promise.all(
-    attendeeIds.map((aid) => request(`/attendee/${aid}`).then((r) => r?.data ?? r))
+    attendeeIds.map((aid) => request(`/attendee/${aid}`))
   );
   const attendeeById = Object.fromEntries(
     attendeeEntities.map((a) => [a.id, a])
@@ -216,7 +233,7 @@ export async function getPollResults(slideId) {
   // Build the response list with names.
   const responses = responseEntities.map((r) => ({
     attendeeId: r.attendee_id,
-    attendeeName: attendeeById[r.attendee_id]?.name ?? 'Unknown',
+    attendeeName: attendeeById[r.attendee_id].name,
     optionIndex: r.option_index,
   }));
 
@@ -232,3 +249,20 @@ export async function getPollResults(slideId) {
     responses,
   };
 }
+
+export const deletePollResponse = (id) => request(`/poll_response/${id}`, { method: 'DELETE' });
+
+
+
+// Other functions --------------------------------------------------------
+export const getPresentationAndSlides = async (id) => {
+  const presentation = await getPresentation(id);
+
+  const slideIds = Array.isArray(presentation.slides) ? presentation.slides : [];
+  const slides = await Promise.all(slideIds.map((slideId) => getSlide(slideId)));
+
+  return { ...presentation, slides };
+};
+
+//TODO delete / update poll
+//should remove ALL poll responses from that poll
