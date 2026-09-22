@@ -34,7 +34,6 @@ async function request(path, { method = 'GET', body } = {}) {
 
 
 
-
 // Presentations --------------------------------------------------------
 /**
  * Fetches a single presentation by id.

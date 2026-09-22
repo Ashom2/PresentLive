@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPresentationAndSlides, deleteSlide } from '../api/client';
 import { useApi } from '../hooks/useApi';
-import SlideDisplay from '../components/SlideDisplay';
 import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
 import SlideEditor from '../components/SlideEditor'

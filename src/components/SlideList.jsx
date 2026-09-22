@@ -1,5 +1,6 @@
 import AddSlideButton from './AddSlideButton';
 import SectionCard from './SectionCard';
+import DeleteButton from './DeleteButton'
 
 /**
  * Lists a deck's slides with the current one highlighted, an add button,
@@ -27,16 +28,10 @@ function SlideList({ slides, currentIndex, onSelect, onDelete, presentationId, o
             onClick={() => onSelect(i)}
           >
             <span>{i + 1}. {slide.title}</span>
-            <button
-              className="btn btn-sm btn-outline-danger py-0 px-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(slide);
-              }}
-              title="Delete slide"
-            >
-              ×
-            </button>
+            <DeleteButton 
+              onDelete={() => onDelete(slide)}
+              tooltip="Delete slide">o
+            </DeleteButton>
           </div>
         ))}
       </div>
