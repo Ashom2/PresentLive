@@ -23,7 +23,7 @@ function AddSlideButton({ presentationId, position, onAdded }) {
         body: '## New slide\nBody text here.',
         type: 'Content',
         position,
-        poll: { question: '', options: [] },
+        poll: { question: '', options: [], responses: [] },
       });
       await onAdded();
     } finally {

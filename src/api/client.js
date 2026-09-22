@@ -192,3 +192,43 @@ export async function submitPollResponse(slideId, attendeeId, optionIndex) {
 
   return created;
 }
+
+export async function getPollResults(slideId) {
+  const slide = await request(`/slide/${slideId}`);
+
+  const options = Array.isArray(slide?.poll?.options) ? slide.poll.options : [];
+  const responseIds = Array.isArray(slide?.poll?.responses) ? slide.poll.responses : [];
+
+  // Fetch each poll response entity.
+  const responseEntities = await Promise.all(
+    responseIds.map((rid) => request(`/poll_response/${rid}`).then((r) => r?.data ?? r))
+  );
+
+  // Fetch each attendee, deduplicated by id.
+  const attendeeIds = [...new Set(responseEntities.map((r) => r?.attendee_id).filter(Boolean))];
+  const attendeeEntities = await Promise.all(
+    attendeeIds.map((aid) => request(`/attendee/${aid}`).then((r) => r?.data ?? r))
+  );
+  const attendeeById = Object.fromEntries(
+    attendeeEntities.map((a) => [a.id, a])
+  );
+
+  // Build the response list with names.
+  const responses = responseEntities.map((r) => ({
+    attendeeId: r.attendee_id,
+    attendeeName: attendeeById[r.attendee_id]?.name ?? 'Unknown',
+    optionIndex: r.option_index,
+  }));
+
+  // Aggregate counts per option.
+  const counts = options.map((_, i) =>
+    responses.filter((r) => r.optionIndex === i).length
+  );
+
+  return {
+    options,
+    counts,
+    total: responses.length,
+    responses,
+  };
+}

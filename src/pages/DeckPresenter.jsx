@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getPresentationAndSlides } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
+import PollResults from '../components/PollResults';
 
 /**
  * Presenter view for a deck.
@@ -29,11 +30,7 @@ function DeckPresenter() {
 
   const slides = Array.isArray(presentation.slides) ? presentation.slides : [];
   const safeIndex = slides.length ? Math.min(currentSlide, slides.length - 1) : 0;
-
-  // Mock poll results until the API exposes them.
-  const options = ['Not familiar', 'Beginner', 'Intermediate', 'Advanced'];
-  const counts = [2, 5, 8, 3];
-  const total = counts.reduce((a, b) => a + b, 0);
+  const isPoll = true; //TODO
 
   return (
     <div className="page-box">
@@ -59,18 +56,9 @@ function DeckPresenter() {
         <p className="text-muted">No slides to present yet.</p>
       )}
 
-      <div className="simple-border mt-3">
-        <div className="fw-semibold mb-2">Live results · {total} responses</div>
-        <div className="d-flex align-items-end gap-2" style={{ height: '70px' }}>
-          {counts.map((c, i) => (
-            <div key={i} className="d-flex flex-column align-items-center">
-              <div className="bar" style={{ height: `${(c / total) * 60}px` }}></div>
-              <span className="small mt-1">{options[i].substring(0, 3)}</span>
-              <span className="small fw-bold">{c}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      {isPoll && (
+        <PollResults slideId={slides[safeIndex].id} intervalMs={3000} showAttendees={true} />
+      )}
     </div>
   );
 }
