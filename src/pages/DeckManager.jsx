@@ -20,17 +20,6 @@ function PresentationManager() {
 
   const presentations = data?.data ?? [];
 
-  async function handleDeletePresentation(presentation) {
-    if (!window.confirm(`Delete "${presentation.title}"? This can't be undone.`)) return;
-
-    try {
-      await deletePresentation(presentation.id);
-      await refetch();
-    } catch (err) {
-      console.error('Delete presentation failed:', err);
-    }
-  }
-
   return (
     <div className="page-box">
       <div className="page-title text-center h4">My presentations</div>
@@ -71,7 +60,9 @@ function PresentationManager() {
                 Present
               </button>
               <DeleteButton
-                onDelete={() => handleDeletePresentation(presentation)}
+                onDelete={() => deletePresentation(presentation.id)}
+                onDeleted={refetch}
+                confirmMessage={`Delete "${presentation.title}"? This cannot be undone.`}
                 tooltip="Delete presentation"
               >
                 Delete

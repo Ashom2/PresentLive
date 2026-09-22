@@ -46,17 +46,6 @@ function DeckEditor() {
     }
   }
 
-  async function handleDeletePresentation() {
-    if (!window.confirm(`Delete "${presentation.title}"? This can't be undone.`)) return;
-
-    try {
-      await deletePresentation(presentation.id);
-      navigate('/decks');
-    } catch (err) {
-      console.error('Delete presentation failed:', err);
-    }
-  }
-
   function confirmNavigation() {
     if (!editorDirty) return true;
     return window.confirm('You have unsaved changes. Leave anyway?');
@@ -80,7 +69,9 @@ function DeckEditor() {
             Present
           </button>
           <DeleteButton
-            onDelete={handleDeletePresentation}
+            confirmMessage={`Delete "${presentation.title}"? This cannot be undone.`}
+            onDelete={() => deletePresentation(presentation.id)}
+            onDeleted={() => navigate('/decks')}
             tooltip="Delete presentation"
           >
             Delete

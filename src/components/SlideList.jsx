@@ -30,7 +30,9 @@ function SlideList({ slides, currentIndex, onSelect, onDelete, presentationId, o
             <span>{i + 1}. {slide.title}</span>
             <DeleteButton 
               onDelete={() => onDelete(slide)}
-              tooltip="Delete slide">o
+              tooltip="Delete slide"
+            >
+              x
             </DeleteButton>
           </div>
         ))}
