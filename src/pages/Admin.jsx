@@ -24,11 +24,7 @@ function Admin() {
         loadingLabel="Creating..."
       />
       <ApiTestButton
-        action={() => createPresentation({
-          title: 'Test deck',
-          author: "unknown",
-          status: "Draft",
-        })}
+        action={() => createPresentation('Test deck')}
         label="Create presentation"
         loadingLabel="Creating..."
       />

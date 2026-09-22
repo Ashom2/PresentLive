@@ -33,14 +33,7 @@ function DeckCreate() {
 
     setSaving(true);
     try {
-      const created = await createPresentation({
-        title: title.trim(),
-        author: 'You',
-        status: 'Draft',
-        slides: [],
-        attendees: [],
-      });
-
+      const created = await createPresentation(title.trim());
       const deck = created?.data ?? created;
       navigate(`/decks/edit/${deck.id}`);
     } catch (err) {
