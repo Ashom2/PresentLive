@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getPresentation, registerAttendee } from '../api/client';
 
@@ -56,8 +56,8 @@ function Join() {
 
       const attendee = await registerAttendee(name.trim(), presentation);
 
-      navigate(`/decks/${presentation.id}/audience`, { 
-        state: { attendeeName: attendee.name, attendeeId: attendee.id } 
+      navigate(`/decks/${presentation.id}/audience`, {
+        state: { attendeeName: attendee.name, attendeeId: attendee.id }
       });
     } catch (err) {
       // getPresentation throws on 404, network failure, etc.

@@ -64,7 +64,7 @@ function DeckEditor() {
         <div className="d-flex gap-1">
           <button
             className="btn btn-outline-success"
-            onClick={() => { if (confirmNavigation()) navigate(`/decks/${presentation.id}/presenter`);}}
+            onClick={() => { if (confirmNavigation()) navigate(`/decks/${presentation.id}/presenter`); }}
           >
             Present
           </button>

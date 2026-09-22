@@ -32,7 +32,7 @@ function SlideDisplay({ markdown, index, total, onPrev, onNext }) {
           Next →
         </button>
       </div>
-      
+
       <div className="p-3">
         {markdown.split('\n').map((line, i) => (
           <div key={i}>{line}</div>

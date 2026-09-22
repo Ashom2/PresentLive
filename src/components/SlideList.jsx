@@ -1,7 +1,6 @@
 import AddSlideButton from './AddSlideButton';
 import SectionCard from './SectionCard';
 
-
 /**
  * Lists a deck's slides with the current one highlighted, an add button,
  * and a delete button per slide.
@@ -23,9 +22,7 @@ function SlideList({ slides, currentIndex, onSelect, onDelete, presentationId, o
         {slides.map((slide, i) => (
           <div
             key={slide.id ?? i}
-            className={`p-1 rounded d-flex justify-content-between align-items-center border ${
-                i === currentIndex ? 'border-warning bg-light' : 'border-transparent bg-light'
-            }`}
+            className={`p-1 rounded d-flex justify-content-between align-items-center border ${i === currentIndex ? 'border-warning bg-light' : 'border-transparent bg-light'}`}
             style={{ cursor: 'pointer' }}
             onClick={() => onSelect(i)}
           >

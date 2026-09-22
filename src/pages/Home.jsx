@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SectionCard from '../components/SectionCard';
-
 
 /**
  * Home (landing) page for PresentLive.

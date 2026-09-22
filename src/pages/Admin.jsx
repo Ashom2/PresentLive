@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ApiTestButton from '../components/ApiTestButton';
 import { fetchData, createPresentation, getPresentations } from '../api/client';
@@ -18,21 +18,21 @@ function Admin() {
   return (
     <div className="page-box">
       <h1 className='text-center'>Admin Page</h1>
-      <ApiTestButton 
+      <ApiTestButton
         action={fetchData}
         label="Fetch data"
         loadingLabel="Creating..."
       />
       <ApiTestButton
-        action={() => createPresentation({ 
-            title: 'Test deck', 
-            author: "unknown",
-            status: "Draft",
+        action={() => createPresentation({
+          title: 'Test deck',
+          author: "unknown",
+          status: "Draft",
         })}
         label="Create presentation"
         loadingLabel="Creating…"
       />
-      <ApiTestButton 
+      <ApiTestButton
         action={getPresentations}
         label="Get presentations"
         loadingLabel="Getting..."

@@ -43,7 +43,7 @@ function PresentationManager() {
               <span className="fw-semibold">{deck.title}</span>
               <span className={`badge ${deck.status === 'Published' ? 'bg-success' : 'bg-secondary'} ms-2`}>
                 {deck.status}
-              </span> 
+              </span>
             </div>
             <div className="d-flex gap-1">
               <button
