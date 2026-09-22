@@ -32,6 +32,16 @@ async function request(path, { method = 'GET', body } = {}) {
   return payload;
 }
 
+async function requestEntity(path, options) {
+  const payload = await request(path, options);
+  return payload?.data ?? payload;
+}
+
+async function requestList(path, options) {
+  const payload = await request(path, options);
+  return Array.isArray(payload?.data) ? payload.data : [];
+}
+
 
 
 // Presentations --------------------------------------------------------
@@ -41,7 +51,13 @@ async function request(path, { method = 'GET', body } = {}) {
  * @param {string} id - Presentation id.
  * @returns {Promise<Object>} The presentation.
  */
-export const getPresentation = (id) => request(`/presentation/${id}`);
+export const getPresentation = (id) => requestEntity(`/presentation/${id}`);
+/**
+ * Fetches every presentation.
+ *
+ * @returns {Promise<Object>} The presentations.
+ */
+export const getAllPresentations = () => requestList("/presentation");
 /**
  * Updates a presentation's fields.
  *
@@ -65,7 +81,7 @@ export const createPresentation = (title, author="Unknown") => {
     slides: [],
     attendees: [],
   };
-  return request('/presentation', { method: 'POST', body: body });
+  return requestEntity('/presentation', { method: 'POST', body: body });
 };
 /**
  * Updates a presentation's title.
@@ -95,6 +111,18 @@ export const updatePresentationAuthor = (id, author) =>
 export const updatePresentationStatus = (id, status) =>
   updatePresentation(id, { status: status });
 /**
+ * Fetches all attendees for a presentation.
+ *
+ * @param {string} presentationId - Presentation id.
+ * @returns {Promise<Array<Object>>} The presentation's attendees.
+ */
+export async function getPresentationAttendees(presentationId) {
+  const presentation = await getPresentation(presentationId);
+  return await Promise.all(
+    presentation.attendees.map((attendeeId) => getAttendee(attendeeId))
+  );
+}
+/**
  * Deletes a presentation and all of its slides.
  *
  * @param {string} id - Presentation id.
@@ -117,7 +145,13 @@ export async function deletePresentation(id) {
  * @param {string} id - Slide id.
  * @returns {Promise<Object>} The slide.
  */
-export const getSlide = (id) => request(`/slide/${id}`);
+export const getSlide = (id) => requestEntity(`/slide/${id}`);
+/**
+ * Fetches every slide.
+ *
+ * @returns {Promise<Object>} The slides.
+ */
+export const getAllSlides = () => requestList("/slide");
 /**
  * Updates a slide's fields.
  *
@@ -142,7 +176,7 @@ export async function createSlide(presentationId, position) {
     position: position,
     poll: { question: '', options: [], responses: [] },
   };
-  const slide = await request('/slide', { method: 'POST', body: body });
+  const slide = await requestEntity('/slide', { method: 'POST', body: body });
 
   // Append the slide's id to the presentation's slides array
   const presentation = await getPresentation(presentationId);
@@ -221,7 +255,13 @@ export async function deleteSlide(slideId, presentationId) {
  * @param {string} id - Attendee id.
  * @returns {Promise<Object>} The attendee.
  */
-export const getAttendee = (id) => request(`/attendee/${id}`);
+export const getAttendee = (id) => requestEntity(`/attendee/${id}`);
+/**
+ * Fetches every attendee.
+ *
+ * @returns {Promise<Object>} The attendees.
+ */
+export const getAllAttendees = () => requestList("/attendee");
 /**
  * Updates an attendee's fields.
  *
@@ -243,25 +283,13 @@ export async function createAttendee(name, presentation) {
     name: name,
     status: "Viewing",
   }
-  const attendee = await request('/attendee', { method: 'POST', body: body });
+  const attendee = await requestEntity('/attendee', { method: 'POST', body: body });
 
   // Append the attendee's id to the presentation's attendees array
   const existingIds = Array.isArray(presentation.attendees) ? presentation.attendees : [];
   await updatePresentation(presentation.id, { attendees: [...existingIds, attendee.id] });
 
   return attendee;
-}
-/**
- * Fetches all attendees for a presentation.
- *
- * @param {string} presentationId - Presentation id.
- * @returns {Promise<Array<Object>>} The presentation's attendees.
- */
-export async function getPresentationAttendees(presentationId) {
-  const presentation = await getPresentation(presentationId);
-  return await Promise.all(
-    presentation.attendees.map((attendeeId) => getAttendee(attendeeId))
-  );
 }
 /**
  * Deletes an attendee.
@@ -280,7 +308,13 @@ export const deleteAttendee = (id) => request(`/attendee/${id}`, { method: 'DELE
  * @param {string} id - Poll response id.
  * @returns {Promise<Object>} The poll response.
  */
-export const getPollResponse = (id) => request(`/poll_response/${id}`);
+export const getPollResponse = (id) => requestEntity(`/poll_response/${id}`);
+/**
+ * Fetches every poll response.
+ *
+ * @returns {Promise<Object>} The responses.
+ */
+export const getAllPollResponses = () => requestList("/poll_response");
 /**
  * Updates a poll response's fields.
  *
@@ -299,7 +333,7 @@ export const updatePollResponse = (id, data) => request(`/poll_response/${id}`, 
  */
 export async function submitPollResponse(slideId, attendeeId, optionIndex) {
   // Create the poll_response entity
-  const response = await request('/poll_response', { method: 'POST', body: {
+  const response = await requestEntity('/poll_response', { method: 'POST', body: {
     attendee_id: attendeeId,
     option_index: optionIndex,
   }});
@@ -377,6 +411,3 @@ export async function getPresentationAndSlides(id) {
   const slides = await Promise.all(slideIds.map((slideId) => getSlide(slideId)));
   return { ...presentation, slides };
 }
-
-export const fetchData = () => request('');
-export const getPresentations = () => request('/presentation');

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../hooks/useApi'
-import { getPresentations, deletePresentation } from '../api/client';
+import { getAllPresentations, deletePresentation } from '../api/client';
 import DeleteButton from '../components/DeleteButton';
 
 /**
@@ -13,12 +13,11 @@ import DeleteButton from '../components/DeleteButton';
  */
 function PresentationManager() {
   const navigate = useNavigate();
-  const { data, loading, error, refetch } = useApi(getPresentations);
+
+  const { data: presentations, loading, error, refetch } = useApi(getAllPresentations);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
-
-  const presentations = data?.data ?? [];
 
   return (
     <div className="page-box">
