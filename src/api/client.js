@@ -210,13 +210,22 @@ export async function createAttendee(name, presentation) {
     name: name,
     status: "Viewing",
   }
-  const created = await request('/attendee', { method: 'POST', body: body });
+  const attendee = await request('/attendee', { method: 'POST', body: body });
 
   // Append the attendee's id to the presentation's attendees array
   const existingIds = Array.isArray(presentation.attendees) ? presentation.attendees : [];
-  await updatePresentation(presentation.id, { attendees: [...existingIds, created.id] });
+  await updatePresentation(presentation.id, { attendees: [...existingIds, attendee.id] });
 
-  return created;
+  return attendee;
+}
+
+
+export async function getPresentationAttendees(presentationId) {
+  const presentation = await getPresentation(id);
+  const attendeeIds = presentation.attendees;
+  return await Promise.all(
+    attendeeIds.map((attendeeId) => getAttendee(attendeeId))
+  );
 }
 
 export const deleteAttendee = (id) => request(`/attendee/${id}`, { method: 'DELETE' });
@@ -261,37 +270,29 @@ export async function getPollResults(slideId) {
   const options = Array.isArray(slide?.poll?.options) ? slide.poll.options : [];
   const responseIds = Array.isArray(slide?.poll?.responses) ? slide.poll.responses : [];
 
-  // Fetch each poll response entity.
-  const responseEntities = await Promise.all(
-    responseIds.map((rid) => request(`/poll_response/${rid}`))
+  // Build the response list with names
+  const responses = await Promise.all(
+    responseIds.map(async (responseId) => {
+      const response = await getPollResponse(responseId);
+      const attendee = await getAttendee(response.attendee_id);
+      return {
+        attendeeId: response.attendee_id,
+        attendeeName: attendee.name,
+        optionIndex: response.option_index,
+      };
+    })
   );
 
-  // Fetch each attendee, deduplicated by id.
-  const attendeeIds = [...new Set(responseEntities.map((r) => r?.attendee_id).filter(Boolean))];
-  const attendeeEntities = await Promise.all(
-    attendeeIds.map((attendeeId) => request(`/attendee/${attendeeId}`))
-  );
-  const attendeeById = Object.fromEntries(
-    attendeeEntities.map((a) => [a.id, a])
-  );
-
-  // Build the response list with names.
-  const responses = responseEntities.map((r) => ({
-    attendeeId: r.attendee_id,
-    attendeeName: attendeeById[r.attendee_id].name,
-    optionIndex: r.option_index,
-  }));
-
-  // Aggregate counts per option.
+  // Aggregate counts per option
   const counts = options.map((_, i) =>
     responses.filter((r) => r.optionIndex === i).length
   );
 
-  return {
-    options,
-    counts,
+  return { 
+    options, 
+    counts, 
     total: responses.length,
-    responses,
+    responses 
   };
 }
 
@@ -308,6 +309,3 @@ export const getPresentationAndSlides = async (id) => {
 
   return { ...presentation, slides };
 };
-
-//TODO delete / update poll
-//should remove ALL poll responses from that poll
