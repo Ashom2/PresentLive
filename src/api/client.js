@@ -49,7 +49,7 @@ export const getPresentation  = (id) => request(`/presentation/${id}`);
 export const updatePresentation = (id, data) => request(`/presentation/${id}`, { method: 'PATCH', body: data });
 
 //TODO
-const createPresentation = (data) => request('/presentation', { method: 'POST', body: data });
+export const createPresentation = (data) => request('/presentation', { method: 'POST', body: data });
 //TODO need to delete slides, attendees
 const deletePresentation = (id) => request(`/presentation/${id}`, { method: 'DELETE' });
 
@@ -65,7 +65,7 @@ export const updatePresentationTitle = (id, title) =>
 
 /**
  * Updates a presentation's author.
- *
+ *poll belonging to a slide, along wit
  * @param {string} id - Presentation id.
  * @param {string} author - The new author.
  * @returns {Promise<Object>} The updated presentation.
@@ -126,16 +126,53 @@ export async function createSlide(presentationId, position) {
 
   return slide;
 }
+
 /**
- * Deletes a slide and removes its id from the presentation's slides array.
+ * Deletes all responses belonging to a poll.
+ * 
+ * @param {string} slideId - Id of the slide's poll to delete
+ * @returns {Promise<void>}
+ */
+export async function deleteSlidePollResponses(slideId) {
+  const slide = await getSlide(slideId);
+  const responseIds = Array.isArray(slide?.poll?.responses) ? slide.poll.responses : [];
+  await Promise.all(responseIds.map((rid) => deletePollResponse(rid)));
+}
+/**
+ * Updates a poll belonging to a slide, and deletes existing responses.
+ * 
+ * @param {string} slideId - Id of the slide's poll to delete
+ * @returns {Promise<void>}
+ */
+export async function updateSlidePoll(slideId, question, options) {
+  // Delete existing invalidated responses
+  await deleteSlidePollResponses(slideId);
+  // Update the poll
+  await updateSlide(slideId, {
+    poll: {
+      question: question,
+      options: options,
+      responses: [],
+    }
+  });
+}
+
+/**
+ * Deletes a slide, its poll responses, and removes its id from the
+ * presentation's slides array.
  *
  * @param {string} slideId - Id of the slide to delete.
  * @param {string} presentationId - Id of the owning presentation.
  * @returns {Promise<void>}
  */
 export async function deleteSlide(slideId, presentationId) {
+  // Clean up any poll responses the slide owns
+  await deleteSlidePollResponses(slideId);
+
+  // Delete the slide
   await request(`/slide/${slideId}`, { method: 'DELETE' });
 
+  // Remove references to the slide's id in the presentation
   const presentation = await getPresentation(presentationId);
   const remaining = (Array.isArray(presentation.slides) ? presentation.slides : []).filter(
     (id) => id !== slideId
@@ -171,9 +208,7 @@ export async function createAttendee(name, presentation) {
 
   return created;
 }
-//TODO
-//delete attendee
-//TODO would this require deleting their responses too?
+
 export const deleteAttendee = (id) => request(`/attendee/${id}`, { method: 'DELETE' });
 
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { updateSlide } from '../api/client';
+import { updateSlide, updateSlidePoll } from '../api/client';
 import SectionCard from './SectionCard';
 
 /**
@@ -33,12 +33,15 @@ function SlideEditor({ slide, onChanged, onDirtyChange }) {
     setError(null);
   }, [slide.id]);
 
-  const dirty =
-    title !== (slide.title ?? '') ||
-    body !== (slide.body ?? '') ||
-    isPoll !== (slide.type === 'Poll') ||
-    question !== (slide.poll?.question ?? '') ||
-    JSON.stringify(options) !== JSON.stringify(slide.poll?.options ?? []);
+  const titleChanged = title !== (slide.title ?? '');
+  const bodyChanged = body !== (slide.body ?? '');
+  const pollTypeChanged = isPoll !== (slide.type === 'Poll');
+  const questionChanged = question !== (slide.poll?.question ?? '');
+  const optionsChanged = JSON.stringify(options) !== JSON.stringify(slide.poll?.options ?? []);
+
+  const pollChanged = pollTypeChanged || questionChanged || optionsChanged;
+
+  const dirty = titleChanged || bodyChanged || pollChanged;
 
   useEffect(() => {
     onDirtyChange?.(dirty);
@@ -48,13 +51,14 @@ function SlideEditor({ slide, onChanged, onDirtyChange }) {
     setError(null);
 
     const trimmedTitle = title.trim();
+    const trimmedQuestion = question.trim();
     const trimmedOptions = options.map((o) => o.trim()).filter(Boolean);
 
     if (!trimmedTitle) {
       setError('Slide title cannot be empty.');
       return;
     }
-    if (isPoll && !question.trim()) {
+    if (isPoll && !trimmedQuestion) {
       setError('Poll question cannot be empty.');
       return;
     }
@@ -65,14 +69,20 @@ function SlideEditor({ slide, onChanged, onDirtyChange }) {
 
     setSaving(true);
     try {
-      await updateSlide(slide.id, {
-        title: trimmedTitle,
-        body,
-        type: isPoll ? 'Poll' : 'Content',
-        poll: isPoll
-          ? { question: question.trim(), options: trimmedOptions }
-          : { question: '', options: [] },
-      });
+      // Save title/body/type
+      if (titleChanged || bodyChanged || pollTypeChanged) {
+        await updateSlide(slide.id, {
+          title: trimmedTitle,
+          body,
+          type: isPoll ? 'Poll' : 'Content',
+        });
+      }
+
+      // Only change poll if the questions or options are changed
+      if (isPoll && (questionChanged || optionsChanged)) {
+        await updateSlidePoll(slide.id, trimmedQuestion, trimmedOptions);
+      }
+
       await onChanged();
       onDirtyChange?.(false);
     } catch (err) {
