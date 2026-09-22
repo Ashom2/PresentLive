@@ -19,7 +19,7 @@ export default function AttendanceDisplay({ presentationId }) {
         fetcher={() => getPresentationAttendees(presentationId)}
         deps={[presentationId]}
         columns={[
-          { key: 'name', label: 'Name', linkTo: (row) => `/attendees/${row.id}`, },
+          { key: 'name', label: 'Name', linkTo: (row) => `/attendee/${row.id}` },
           { key: 'status', label: 'Status' },
         ]}
         rowKey={(row) => row.id}

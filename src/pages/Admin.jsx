@@ -43,7 +43,7 @@ export default function Admin() {
           fetcher={getAllPresentations}
           deps={[]}
           columns={[
-            { key: 'id', label: 'ID' },
+            { key: 'id', label: 'ID', linkTo: (row) => `/decks/edit/${row.id}`},
             { key: 'title', label: 'Title' },
             { key: 'author', label: 'Author' },
             { key: 'status', label: 'Status' },
@@ -60,7 +60,7 @@ export default function Admin() {
           fetcher={getAllSlides}
           deps={[]}
           columns={[
-            { key: 'id', label: 'ID' },
+            { key: 'id', label: 'ID', linkTo: (row) => `/slide/${row.id}` },
             { key: 'title', label: 'Title' },
             { key: 'type', label: 'Type' },
             { key: 'position', label: 'Position' },
@@ -75,7 +75,7 @@ export default function Admin() {
           fetcher={getAllAttendees}
           deps={[]}
           columns={[
-            { key: 'id', label: 'ID' },
+            { key: 'id', label: 'ID', linkTo: (row) => `/attendee/${row.id}`},
             { key: 'name', label: 'Name' },
             { key: 'status', label: 'Status' },
           ]}
@@ -89,7 +89,7 @@ export default function Admin() {
           fetcher={getAllPollResponses}
           deps={[]}
           columns={[
-            { key: 'id', label: 'ID' },
+            { key: 'id', label: 'ID', linkTo: (row) => `/poll_response/${row.id}`},
             { key: 'attendee_id', label: 'Attendee ID' },
             { key: 'option_index', label: 'Option Index' },
           ]}

@@ -53,7 +53,7 @@ export default function DataTable({ fetcher, deps = [], columns, title, rowKey }
                   return (
                     <td key={col.key}>
                       {to ? (
-                        <Link to={to} className="btn btn-link p-0 align-baseline">
+                        <Link to={to}>
                           {value}
                         </Link>
                       ) : (
