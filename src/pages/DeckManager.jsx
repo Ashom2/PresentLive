@@ -14,7 +14,7 @@ function PresentationManager() {
   const navigate = useNavigate();
   const { data, loading, error } = useApi(getPresentations);
 
-  if (loading) return <p>Loading…</p>;
+  if (loading) return <p>Loading...</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
 
   const decks = data?.data ?? [];
@@ -48,13 +48,13 @@ function PresentationManager() {
             <div className="d-flex gap-1">
               <button
                 className="btn btn-outline-primary"
-                onClick={() => navigate(`/decks/${deck.id}/editor`)}
+                onClick={() => navigate(`/decks/edit/${deck.id}`)}
               >
                 Edit
               </button>
               <button
                 className="btn btn-outline-success"
-                onClick={() => navigate(`/decks/${deck.id}/presenter`)}
+                onClick={() => navigate(`/decks/present/${deck.id}`)}
               >
                 Present
               </button>

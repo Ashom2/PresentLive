@@ -24,7 +24,7 @@ function DeckPresenter() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  if (loading) return <p>Loading…</p>;
+  if (loading) return <p>Loading...</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
   if (!presentation) return <p>Presentation not found.</p>;
 

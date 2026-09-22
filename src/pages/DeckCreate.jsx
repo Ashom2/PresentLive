@@ -42,7 +42,7 @@ function DeckCreate() {
       });
 
       const deck = created?.data ?? created;
-      navigate(`/decks/${deck.id}/editor`);
+      navigate(`/decks/edit/${deck.id}`);
     } catch (err) {
       setError(err.message ?? 'Could not create the presentation.');
     } finally {
@@ -124,7 +124,7 @@ function DeckCreate() {
           onClick={handleCreate}
           disabled={saving}
         >
-          {saving ? 'Creating…' : 'Create presentation'}
+          {saving ? 'Creating...' : 'Create presentation'}
         </button>
       </div>
     </div>

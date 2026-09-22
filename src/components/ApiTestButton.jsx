@@ -7,10 +7,10 @@ import { useState } from 'react';
  * @param {Object} props
  * @param {Function} props.action - Async function to run when clicked.
  * @param {string} [props.label='Fetch data'] - Button label when idle.
- * @param {string} [props.loadingLabel='Loading…'] - Button label while running.
+ * @param {string} [props.loadingLabel='Loading...'] - Button label while running.
  * @returns {JSX.Element} A button with status feedback.
  */
-function ApiTestButton({ action, label = 'Fetch data', loadingLabel = 'Loading…' }) {
+function ApiTestButton({ action, label = 'Fetch data', loadingLabel = 'Loading...' }) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState(null);

@@ -30,7 +30,7 @@ function Admin() {
           status: "Draft",
         })}
         label="Create presentation"
-        loadingLabel="Creating…"
+        loadingLabel="Creating..."
       />
       <ApiTestButton
         action={getPresentations}

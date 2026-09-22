@@ -34,9 +34,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/decks" element={<PresentationManager />} />
-          <Route path="/decks/:id/editor" element={<DeckEditor />} />
-          <Route path="/decks/:id/presenter" element={<DeckPresenter />} />
-          <Route path="/decks/:id/audience" element={<DeckAudience />} />
+          <Route path="/decks/edit/:id" element={<DeckEditor />} />
+          <Route path="/decks/present/:id" element={<DeckPresenter />} />
+          <Route path="/decks/view/:id" element={<DeckAudience />} />
           <Route path="/join" element={<Join />} />
           <Route path="/decks/create" element={<DeckCreate />} />
           <Route path="/admin" element={<Admin />} />

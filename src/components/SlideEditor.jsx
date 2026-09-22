@@ -186,7 +186,7 @@ function SlideEditor({ slide, onChanged, onDirtyChange }) {
           onClick={handleApply}
           disabled={saving || !dirty}
         >
-          {saving ? 'Saving…' : 'Apply changes'}
+          {saving ? 'Saving...' : 'Apply changes'}
         </button>
       </div>
     </SectionCard>

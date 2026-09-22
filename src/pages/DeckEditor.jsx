@@ -19,7 +19,7 @@ function DeckEditor() {
 
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  if (loading) return <p>Loading…</p>;
+  if (loading) return <p>Loading...</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
   if (!presentation) return <p>Presentation not found.</p>;
 
@@ -64,7 +64,7 @@ function DeckEditor() {
         <div className="d-flex gap-1">
           <button
             className="btn btn-outline-success"
-            onClick={() => { if (confirmNavigation()) navigate(`/decks/${presentation.id}/presenter`); }}
+            onClick={() => { if (confirmNavigation()) navigate(`/decks/present/${presentation.id}`); }}
           >
             Present
           </button>

@@ -29,7 +29,7 @@ function PollResults({ slideId, title = 'Live results', intervalMs, showAttendee
   }, [intervalMs, slideId]);
 
   if (loading && !results) {
-    return <SectionCard title={title} className="mb-2">Loading…</SectionCard>;
+    return <SectionCard title={title} className="mb-2">Loading...</SectionCard>;
   }
   if (error && !results) {
     return (

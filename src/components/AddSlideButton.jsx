@@ -37,7 +37,7 @@ function AddSlideButton({ presentationId, position, onAdded }) {
       onClick={handleClick}
       disabled={saving}
     >
-      {saving ? 'Adding…' : '+ Add slide'}
+      {saving ? 'Adding...' : '+ Add slide'}
     </button>
   );
 }

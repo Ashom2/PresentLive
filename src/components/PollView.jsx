@@ -82,7 +82,7 @@ function PollView({ slide, onSubmit, disabled = false }) {
           onClick={handleSubmit}
           disabled={selected === null || disabled || submitted || submitting}
         >
-          {submitting ? 'Submitting…' : 'Submit answer'}
+          {submitting ? 'Submitting...' : 'Submit answer'}
         </button>
         {submitted && (
           <span className="small text-success">Submitted — cannot be changed</span>

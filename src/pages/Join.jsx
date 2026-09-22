@@ -25,8 +25,8 @@ function Join() {
   async function handleJoin() {
     setError('');
 
-    const trimmed = code.trim();
-    if (!trimmed) {
+    const trimmedCode = code.trim();
+    if (!trimmedCode) {
       setError('Please enter a presentation link or code.');
       return;
     }
@@ -35,8 +35,8 @@ function Join() {
       return;
     }
 
-    // Accept bare ids or paths like /presentation/abc or /presentation/abc/presenter.
-    const id = trimmed.split('/').filter(Boolean).pop();
+    // Accept bare ids or paths like /present/abc or /edit/abc.
+    const id = trimmedCode.split('/').filter(Boolean).pop();
 
     setChecking(true);
     try {
@@ -56,7 +56,7 @@ function Join() {
 
       const attendee = await registerAttendee(name.trim(), presentation);
 
-      navigate(`/decks/${presentation.id}/audience`, {
+      navigate(`/decks/view/${presentation.id}`, {
         state: { attendeeName: attendee.name, attendeeId: attendee.id }
       });
     } catch (err) {
@@ -98,7 +98,7 @@ function Join() {
         onClick={handleJoin}
         disabled={checking}
       >
-        {checking ? 'Checking…' : 'Join'}
+        {checking ? 'Checking...' : 'Join'}
       </button>
     </div>
   );
