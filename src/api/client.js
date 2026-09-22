@@ -110,19 +110,13 @@ export const updateSlide = (id, data) => request(`/slide/${id}`, { method: 'PATC
 /**
  * Creates a slide and appends it to the presentation's slides array.
  *
- * @param {Object} slide
- * @param {string} slide.presentation_id
- * @param {string} slide.title
- * @param {string} slide.body
- * @param {string} slide.type - 'Content' or 'Poll'.
- * @param {number} slide.position
- * @param {Object} slide.poll - { question, options }.
+ * @param {string} presentationId - Id of the presentation.
+ * @param {number} position - Position of the slide in the presentation.
  * @returns {Promise<Object>} The created slide, including its id.
  */
 export async function createSlide(presentationId, position) {
   // Create the slide entity
   const body = {
-    presentation_id: presentationId,
     title: 'New slide',
     body: '## New slide\nBody text here.',
     type: 'Content',
