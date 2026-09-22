@@ -36,6 +36,7 @@ export default function DataTable({ fetcher, deps = [], columns, title, rowKey }
       {rows.length === 0 ? (
         <div className="p-2 text-muted small">Nothing to show.</div>
       ) : (
+        <div className="table-responsive">
         <table className="table table-sm table-hover align-middle mb-0">
           <thead className="table-light">
             <tr>
@@ -66,6 +67,7 @@ export default function DataTable({ fetcher, deps = [], columns, title, rowKey }
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   );

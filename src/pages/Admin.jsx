@@ -47,8 +47,8 @@ export default function Admin() {
             { key: 'title', label: 'Title' },
             { key: 'author', label: 'Author' },
             { key: 'status', label: 'Status' },
-            { key: 'slides', label: 'Slides' },
-            { key: 'attendees', label: 'Attendees' },
+            // { key: 'slides', label: 'Slides' },
+            // { key: 'attendees', label: 'Attendees' },
           ]}
           rowKey={(row) => row.id}
         />
