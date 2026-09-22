@@ -57,7 +57,7 @@ function Join() {
       const attendee = await registerAttendee(name.trim(), presentation);
 
       navigate(`/decks/${presentation.id}/audience`, { 
-        state: { displayName: attendee.name, attendeeId: attendee.id } 
+        state: { attendeeName: attendee.name, attendeeId: attendee.id } 
       });
     } catch (err) {
       // getPresentation throws on 404, network failure, etc.

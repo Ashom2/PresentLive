@@ -95,7 +95,6 @@ export async function createSlide(slide) {
   // Append the slide's id to the presentation's slides array
   const presentation = await request(`/presentation/${slide.presentation_id}`);
   const existingIds = Array.isArray(presentation.slides) ? presentation.slides : [];
-
   await request(`/presentation/${slide.presentation_id}`, {
     method: 'PATCH',
     body: { slides: [...existingIds, created.id] },
@@ -159,12 +158,36 @@ export async function registerAttendee(name, presentation) {
   }});
 
   // Append the attendee's id to the presentation's attendees array
-  // const presentation = await request(`/presentation/${presentation_id}`);
   const existingIds = Array.isArray(presentation.attendees) ? presentation.attendees : [];
-
   await request(`/presentation/${presentation.id}`, {
     method: 'PATCH',
     body: { attendees: [...existingIds, created.id] },
+  });
+
+  return created;
+}
+
+
+
+export async function submitPollResponse(slideId, attendeeId, optionIndex) {
+  // Create the poll_response entity
+  const created = await request('/poll_response', { method: 'POST', body: {
+    attendee_id: attendeeId,
+    option_index: optionIndex,
+  }});
+
+  // Append the poll_response's id to the slides's responses array within the poll JSON field
+  const slide = await request(`/slide/${slideId}`);
+  const existingPoll = slide.poll;
+  const existingIds = Array.isArray(existingPoll.responses) ? existingPoll.responses : [];
+  await request(`/slide/${slideId}`, {
+    method: 'PATCH',
+    body: {
+      poll: {
+        ...existingPoll,
+        responses: [...existingIds, created.id] 
+      }
+    },
   });
 
   return created;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getPresentationAndSlides } from '../api/client';
+import { getPresentationAndSlides, submitPollResponse } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
 import PollView from '../components/PollView';
@@ -18,7 +18,8 @@ function DeckAudience() {
   const location = useLocation();
   const { id } = useParams();
 
-  const displayName = location.state?.displayName ?? 'Anonymous';
+  const attendeeName = location.state?.attendeeName ?? 'Anonymous';
+  const attendeeId = location.state?.attendeeId;
 
   const { data: presentation, loading, error } = useApi(
     () => getPresentationAndSlides(id),
@@ -52,11 +53,11 @@ function DeckAudience() {
   }
 
   async function handlePollSubmit(optionIndex) {
-    await submitPollResponse({
-      slide_id: currentSlideData.id,
-      attendee_name: displayName,
-      option_index: optionIndex,
-    });
+    await submitPollResponse(
+      currentSlideData.id,
+      attendeeId,
+      optionIndex
+    );
   }
 
   return (
@@ -69,7 +70,7 @@ function DeckAudience() {
         >
           ← Exit presentation
         </button>
-        <span className="text-muted">Display name: {displayName}</span>
+        <span className="text-muted">Display name: {attendeeName}</span>
       </div>
 
       {slides.length === 0 ? (
