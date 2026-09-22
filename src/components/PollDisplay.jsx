@@ -11,7 +11,7 @@ import SectionCard from './SectionCard';
  * @param {boolean} [props.disabled] - Disables interaction (e.g. already answered).
  * @returns {JSX.Element} The poll view.
  */
-function PollView({ slide, onSubmit, disabled = false }) {
+export default function PollDisplay({ slide, onSubmit, disabled = false }) {
   const question = slide.poll?.question ?? '';
   const options = Array.isArray(slide.poll?.options) ? slide.poll.options : [];
 
@@ -93,5 +93,3 @@ function PollView({ slide, onSubmit, disabled = false }) {
     </SectionCard>
   );
 }
-
-export default PollView;

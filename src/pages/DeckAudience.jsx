@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getPresentationAndSlides, submitPollResponse } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
-import PollView from '../components/PollView';
+import PollDisplay from '../components/PollDisplay';
 
 /**
  * Audience view for a deck.
@@ -79,7 +79,7 @@ function DeckAudience() {
           />
 
           {isPoll && (
-            <PollView
+            <PollDisplay
               slide={currentSlideData}
               onSubmit={handlePollSubmit}
             />
