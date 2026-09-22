@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPresentationAndSlides } from '../api/client';
+import { getPresentationAndSlides, isPoll } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
 import PollResults from '../components/PollResults';
@@ -31,7 +31,6 @@ function DeckPresenter() {
 
   const slides = Array.isArray(presentation.slides) ? presentation.slides : [];
   const safeIndex = slides.length ? Math.min(currentSlide, slides.length - 1) : 0;
-  const isPoll = true; //TODO
 
   return (
     <div className="page-box">
@@ -57,7 +56,7 @@ function DeckPresenter() {
         <p className="text-muted">No slides to present yet.</p>
       )}
 
-      {isPoll && (
+      {isPoll(slides[safeIndex]) && (
         <PollResults slideId={slides[safeIndex].id} intervalMs={3000} showAttendees={true} />
       )}
 

@@ -15,7 +15,7 @@ import { getPollResults } from '../api/client';
  * @param {boolean} [props.showAttendees=false] - Show each response with its attendee name.
  * @returns {JSX.Element} The poll results panel.
  */
-function PollResults({ slideId, title = 'Live results', intervalMs, showAttendees = false }) {
+function PollResults({ slideId, title = 'Slide Poll Results', intervalMs, showAttendees = false }) {
   const { data: results, loading, error, refetch } = useApi(
     () => getPollResults(slideId),
     [slideId]
@@ -48,22 +48,18 @@ function PollResults({ slideId, title = 'Live results', intervalMs, showAttendee
         {total} {total === 1 ? 'response' : 'responses'}
       </div>
 
-      {total === 0 ? (
-        <div className="text-muted small">No responses yet.</div>
-      ) : (
-        <div className="d-flex align-items-end gap-2" style={{ height: '70px' }}>
-          {counts.map((c, i) => (
-            <div key={i} className="d-flex flex-column align-items-center">
-              <div
-                className="bar"
-                style={{ height: `${total ? (c / total) * 60 : 0}px` }}
-              ></div>
-              <span className="small mt-1">{options[i]?.substring(0, 3) ?? '—'}</span>
-              <span className="small fw-bold">{c}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="d-flex align-items-end gap-2" style={{ height: '70px' }}>
+        {counts.map((c, i) => (
+          <div key={i} className="d-flex flex-column align-items-center">
+            <div
+              className="bar"
+              style={{ height: `${total ? (c / total) * 60 : 0}px` }}
+            ></div>
+            <span className="small mt-1">{options[i]?.substring(0, 3) ?? '—'}</span>
+            <span className="small fw-bold">{c}</span>
+          </div>
+        ))}
+      </div>
 
       {showAttendees && responses.length > 0 && (
         <div className="border-top pt-2 mt-2 d-flex flex-column gap-1">

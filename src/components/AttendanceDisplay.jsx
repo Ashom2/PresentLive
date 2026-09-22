@@ -13,7 +13,7 @@ import DataTable from './DataTable';
  */
 export default function AttendanceDisplay({ presentationId }) {
   return (
-    <SectionCard title="Attendance" className="mb-2" bodyClassName="">
+    <SectionCard title="Presentation Attendance" className="mb-2" bodyClassName="">
       <DataTable
         title="Presentation attendees"
         fetcher={() => getPresentationAttendees(presentationId)}

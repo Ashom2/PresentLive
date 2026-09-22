@@ -246,6 +246,9 @@ export async function deleteSlide(slideId, presentationId) {
   await updatePresentation(presentationId, { slides: remaining });
 }
 
+export function isPoll(slide) {
+  return slide.type === "Poll";
+}
 
 
 // Attendees --------------------------------------------------------
