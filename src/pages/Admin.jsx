@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../hooks/useApi';
 import ApiTestButton from '../components/ApiTestButton';
-import { createPresentation, getAllPresentations, getAllAttendees } from '../api/client';
+import { createPresentation, getAllPresentations, getAllSlides, getAllAttendees, getAllPollResponses } from '../api/client';
 import DataTable from '../components/DataTable';
 import SectionCard from '../components/SectionCard';
 
@@ -39,7 +39,39 @@ function Admin() {
 
       <SectionCard title="Presentations" className="mb-2" bodyClassName="">
         <DataTable
-          title="All Attendees"
+          title="All presentations"
+          fetcher={getAllPresentations}
+          deps={[]}
+          columns={[
+            { key: 'id', label: 'ID' },
+            { key: 'title', label: 'Title' },
+            { key: 'author', label: 'Author' },
+            { key: 'status', label: 'Status' },
+            { key: 'slides', label: 'Slides' },
+            { key: 'attendees', label: 'Attendees' },
+          ]}
+          rowKey={(row) => row.id}
+        />
+      </SectionCard>
+
+      <SectionCard title="Slides" className="mb-2" bodyClassName="">
+        <DataTable
+          title="All slides"
+          fetcher={getAllSlides}
+          deps={[]}
+          columns={[
+            { key: 'id', label: 'ID' },
+            { key: 'title', label: 'Title' },
+            { key: 'type', label: 'Type' },
+            { key: 'position', label: 'Position' },
+          ]}
+          rowKey={(row) => row.id}
+        />
+      </SectionCard>
+
+      <SectionCard title="Attendees" className="mb-2" bodyClassName="">
+        <DataTable
+          title="All attendees"
           fetcher={getAllAttendees}
           deps={[]}
           columns={[
@@ -51,15 +83,15 @@ function Admin() {
         />
       </SectionCard>
 
-      <SectionCard title="Attendees" className="mb-2" bodyClassName="">
+      <SectionCard title="Poll Responses" className="mb-2" bodyClassName="">
         <DataTable
-          title="All Attendees"
-          fetcher={getAllAttendees}
+          title="All poll responses"
+          fetcher={getAllPollResponses}
           deps={[]}
           columns={[
             { key: 'id', label: 'ID' },
-            { key: 'name', label: 'Name' },
-            { key: 'status', label: 'Status' },
+            { key: 'attendee_id', label: 'Attendee ID' },
+            { key: 'option_index', label: 'Option Index' },
           ]}
           rowKey={(row) => row.id}
         />
