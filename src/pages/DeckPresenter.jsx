@@ -4,6 +4,7 @@ import { getPresentationAndSlides } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideDisplay from '../components/SlideDisplay';
 import PollResults from '../components/PollResults';
+import AttendanceDisplay from '../components/AttendanceDisplay';
 
 /**
  * Presenter view for a deck.
@@ -59,6 +60,10 @@ function DeckPresenter() {
       {isPoll && (
         <PollResults slideId={slides[safeIndex].id} intervalMs={3000} showAttendees={true} />
       )}
+
+      <AttendanceDisplay 
+        presentationId={presentation.id}
+      />
     </div>
   );
 }
