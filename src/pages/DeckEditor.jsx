@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPresentationAndSlides, deleteSlide } from '../api/client';
+import { getPresentationAndSlides, deleteSlide, deletePresentation } from '../api/client';
 import { useApi } from '../hooks/useApi';
 import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
 import SlideEditor from '../components/SlideEditor'
+import DeleteButton from '../components/DeleteButton';
 
 function DeckEditor() {
   const navigate = useNavigate();
@@ -45,6 +46,17 @@ function DeckEditor() {
     }
   }
 
+  async function handleDeletePresentation() {
+    if (!window.confirm(`Delete "${presentation.title}"? This can't be undone.`)) return;
+
+    try {
+      await deletePresentation(presentation.id);
+      navigate('/decks');
+    } catch (err) {
+      console.error('Delete presentation failed:', err);
+    }
+  }
+
   function confirmNavigation() {
     if (!editorDirty) return true;
     return window.confirm('You have unsaved changes. Leave anyway?');
@@ -67,6 +79,12 @@ function DeckEditor() {
           >
             Present
           </button>
+          <DeleteButton
+            onDelete={handleDeletePresentation}
+            tooltip="Delete presentation"
+          >
+            Delete
+          </DeleteButton>
         </div>
       </div>
       <div className="row g-3">
