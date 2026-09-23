@@ -45,7 +45,12 @@ export default function DeckEditor() {
 
   return (
     <div className="page-box">
-      <div className="page-title text-center h4">Presentation editor - {presentation.title}</div>
+      <div className="page-title text-center h4">
+        {presentation.title}
+      </div>
+      <div className="text-center text-muted">
+        Presentation editor
+      </div>
       <div className="d-flex justify-content-between mb-3">
         <BackButton to={"/decks"} onClick={() => confirmNavigation()}>
           My presentations
