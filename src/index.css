@@ -1,9 +1,16 @@
+#root {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
 .app-main {
   flex: 1;
   width: 100%;
-  max-width: 1100px;    /* this is your content width — tune to taste */
-  margin: 0 auto;       /* centers it */
-  padding: 2rem 1rem;   /* vertical + horizontal gutter */
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
 .page-box {
