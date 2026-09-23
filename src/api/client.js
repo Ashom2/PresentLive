@@ -273,6 +273,9 @@ export const getAllAttendees = () => requestList("/attendee");
  * @returns {Promise<Object>} The updated attendee.
  */
 export const updateAttendee = (id, data) => request(`/attendee/${id}`, { method: 'PATCH', body: data });
+
+export const updateAttendeeSlideIndex = (attendeeId, slideIndex) =>
+  updateAttendee(attendeeId, { slide_index: slideIndex });
 /**
  * Creates an attendee and appends their id to the presentation's attendees array.
  *

@@ -20,8 +20,6 @@ export default function Join() {
   const [error, setError] = useState('');
   const [checking, setChecking] = useState(false);
 
-  //TODO since there are multiple client functions here can we move this
-  //function to client?
   async function handleJoin() {
     setError('');
 
@@ -52,13 +50,13 @@ export default function Join() {
         return;
       }
 
-      console.log("presentation found");
-
       const attendee = await createAttendee(name.trim(), presentation);
 
-      navigate(`/decks/view/${presentation.id}`, {
-        state: { attendeeName: attendee.name, attendeeId: attendee.id }
-      });
+      navigate(`/decks/view/${presentation.id}`, {state: { 
+        attendeeName: attendee.name, 
+        attendeeId: attendee.id, 
+        attendeeSlideIndex: attendee.slide_index 
+      }});
     } catch (err) {
       // getPresentation throws on 404, network failure, etc.
       setError('No presentation found for that code.');

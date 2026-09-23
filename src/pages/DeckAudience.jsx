@@ -1,6 +1,7 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { submitPollResponse } from '../api/client';
+import { getAttendee, submitPollResponse, updateAttendee } from '../api/client';
 import { useDeck } from '../hooks/useDeck';
+import { useApi } from '../hooks/useApi'
 import SlideDisplay from '../components/SlideDisplay';
 import PollDisplay from '../components/PollDisplay';
 
@@ -13,25 +14,57 @@ import PollDisplay from '../components/PollDisplay';
  * @returns {JSX.Element} The audience page.
  */
 export default function DeckAudience() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams();
 
-  const attendeeName = location.state?.attendeeName ?? 'Anonymous';
+  // Get the attendee's ID from router state (placeholder)
   const attendeeId = location.state?.attendeeId;
 
-  const deck = useDeck(id);
-  if (deck.status === 'loading') return <p>Loading...</p>;
+  const { data: attendee, loading, error } = useApi(
+    () => getAttendee(attendeeId),
+    [attendeeId]
+  );
+  if (loading) return <p>Loading...</p>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
+  if (!attendee) return <p>Attendee not found.</p>;
+
+  return <AudienceView attendee={attendee} />;
+}
+
+/**
+ * Slide viewer for a loaded attendee.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Object} props.attendee - The loaded attendee.
+ * @returns {JSX.Element}
+ */
+function AudienceView({ attendee }) {
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  const attendeeId = attendee.id;
+  const attendeeName = attendee.name ?? 'Anonymous';
+  const attendeeSlideIndex = attendee.slide_index ?? 0;
+
+  const deck = useDeck(id, attendeeSlideIndex);
+  if (deck.status === 'loading') return <p>Loading…</p>;
   if (deck.status === 'error') return <div className="alert alert-danger">{deck.error}</div>;
   if (deck.status === 'not-found') return <p>Presentation not found.</p>;
   const { presentation, slides, currentSlide, currentSlideIndex, setCurrentSlideIndex, currentSlideIsPoll } = deck;
 
-  function goPrev() {
-    setCurrentSlideIndex((i) => Math.max(0, i - 1));
-  }
+  async function goNext() {
+    const next = Math.min(slides.length - 1, currentSlideIndex + 1);
+    if (next === currentSlideIndex) return;
 
-  function goNext() {
-    setCurrentSlideIndex((i) => Math.min(slides.length - 1, i + 1));
+    setCurrentSlideIndex(next);
+
+    if (attendeeId) {
+      try {
+        await updateAttendee(attendeeId, { slide_index: next });
+      } catch (err) {
+        console.error('Could not persist attendee progress:', err);
+      }
+    }
   }
 
   async function handlePollSubmit(optionIndex) {
@@ -63,7 +96,6 @@ export default function DeckAudience() {
             markdown={currentSlide.body}
             index={currentSlideIndex}
             total={slides.length}
-            onPrev={goPrev}
             onNext={goNext}
           />
 

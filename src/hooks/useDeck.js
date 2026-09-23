@@ -6,6 +6,7 @@ import { getPresentationAndSlides, isPoll } from '../api/client';
  * Fetches a presentation with its slides and tracks the current slide.
  *
  * @param {string} id - Presentation id.
+ * @param {number} [initialIndex=0] - Starting slide index.
  * @returns {{
  *   status: 'loading' | 'error' | 'not-found' | 'ready',
  *   error: string | null,
@@ -18,13 +19,13 @@ import { getPresentationAndSlides, isPoll } from '../api/client';
  *   refetch: Function,
  * }}
  */
-export function useDeck(id) {
+export function useDeck(id, initialIndex = 0) {
   const { data, loading, error, refetch } = useApi(
     () => getPresentationAndSlides(id),
     [id]
   );
 
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(initialIndex);
 
   if (loading) return { status: 'loading', error: null, refetch };
   if (error) return { status: 'error', error, refetch };

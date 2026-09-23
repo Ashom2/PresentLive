@@ -11,26 +11,39 @@
  * @returns {JSX.Element} The slide preview container with navigation.
  */
 export default function SlideDisplay({ markdown, index, total, onPrev, onNext }) {
+  const showPrev = typeof onPrev === 'function';
+  const showNext = typeof onNext === 'function';
+
   return (
     <div className="simple-border bg-light p-0 mb-2" style={{ height: "500px" }}>
       <div className="bg-secondary bg-opacity-10 border-top d-flex justify-content-between align-items-center p-3">
-        <button
-          className="btn btn-sm btn-outline-secondary"
-          onClick={onPrev}
-          disabled={index === 0}
-        >
-          ← Previous
-        </button>
+        {showPrev ? (
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            onClick={onPrev}
+            disabled={index === 0}
+          >
+            ← Previous
+          </button>
+        ) : (
+          <span style={{ width: '6rem' }} />
+        )}
+        
         <span className="fw-semibold text-secondary">
           Slide {index + 1} of {total}
         </span>
-        <button
-          className="btn btn-sm btn-outline-secondary"
-          onClick={onNext}
-          disabled={index === total - 1}
-        >
-          Next →
-        </button>
+
+        {showNext ? (
+          <button
+            className="btn btn-sm btn-outline-secondary"
+            onClick={onNext}
+            disabled={index === total - 1}
+          >
+            Next →
+          </button>
+        ) : (
+          <span style={{ width: '6rem' }} />
+        )}
       </div>
 
       <div className="p-3">
