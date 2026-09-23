@@ -7,6 +7,24 @@
  *    slide
  *    poll response
  * 
+ * SlideNavBar component
+ * preview mode
+ * review mode
+ * presenter mode
+ * audience mode
+ * 
+ * readonly poll results
+ * put mode underneath heading
+ * get rid of currentSlide?.type === 'Poll'
+ * rename DeckAudience to DeckViewer
+ * Slide preview spoof title
+ * rename DeckAudience to DeckAttendee
+ * 
+ * make results page real, and navigable by presentation owner
+ * 
+ * 
+ * 
+ * what happens when you go to the view URL but didn't join?
  */
 
 import { useState } from 'react';
