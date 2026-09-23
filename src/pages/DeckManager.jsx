@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../hooks/useApi'
 import { getAllPresentations, deletePresentation } from '../api/client';
-import DeleteButton from '../components/DeleteButton';
+import { DeleteButton } from '../components/Buttons';
 
 /**
  * Manage presentations page.

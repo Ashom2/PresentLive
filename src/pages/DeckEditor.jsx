@@ -5,7 +5,7 @@ import { useDeck } from '../hooks/useDeck';
 import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
 import SlideEditor from '../components/SlideEditor'
-import DeleteButton from '../components/DeleteButton';
+import { DeleteButton } from '../components/Buttons';
 
 export default function DeckEditor() {
   const navigate = useNavigate();

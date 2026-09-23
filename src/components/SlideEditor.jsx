@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { updateSlide, updateSlidePoll } from '../api/client';
 import SectionCard from './SectionCard';
-import DeleteButton from './DeleteButton';
+import { DeleteButton } from './Buttons';
 
 /**
  * Editor for a single slide. Edits are held locally and applied

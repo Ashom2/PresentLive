@@ -11,8 +11,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useApi } from '../hooks/useApi';
-import ApiTestButton from '../components/ApiTestButton';
+import { ApiTestButton } from '../components/Buttons';
 import { createPresentation, getAllPresentations, getAllSlides, getAllAttendees, getAllPollResponses } from '../api/client';
 import DataTable from '../components/DataTable';
 import SectionCard from '../components/SectionCard';

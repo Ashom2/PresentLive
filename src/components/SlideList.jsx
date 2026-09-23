@@ -1,6 +1,5 @@
-import AddSlideButton from './AddSlideButton';
+import { AddSlideButton, DeleteButton } from './Buttons';
 import SectionCard from './SectionCard';
-import DeleteButton from './DeleteButton'
 
 /**
  * Lists a deck's slides with the current one highlighted, an add button,
