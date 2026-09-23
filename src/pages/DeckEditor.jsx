@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPresentationAndSlides, deleteSlide, deletePresentation } from '../api/client';
-import { useApi } from '../hooks/useApi';
+import { deleteSlide, deletePresentation } from '../api/client';
+import { useDeck } from '../hooks/useDeck';
 import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
 import SlideEditor from '../components/SlideEditor'
@@ -11,25 +11,17 @@ export default function DeckEditor() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [editorDirty, setEditorDirty] = useState(false);
-
-  const { data: presentation, loading, error, refetch } = useApi(
-    () => getPresentationAndSlides(id),
-    [id]
-  );
-
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <div className="alert alert-danger">{error}</div>;
-  if (!presentation) return <p>Presentation not found.</p>;
-
-  const slides = Array.isArray(presentation.slides) ? presentation.slides : [];
-  const safeIndex = slides.length ? Math.min(currentSlide, slides.length - 1) : 0;
+  
+  const deck = useDeck(id);
+  if (deck.status === 'loading') return <p>Loading...</p>;
+  if (deck.status === 'error') return <div className="alert alert-danger">{deck.error}</div>;
+  if (deck.status === 'not-found') return <p>Presentation not found.</p>;
+  const { presentation, slides, currentSlide, currentSlideIndex, setCurrentSlideIndex, currentSlideIsPoll, refetch } = deck;
 
   async function handleAdded() {
     const previousLength = slides.length;
     await refetch();
-    setCurrentSlide(previousLength);
+    setCurrentSlideIndex(previousLength);
   }
 
   async function handleDeleteSlide(slide) {
@@ -40,7 +32,7 @@ export default function DeckEditor() {
     try {
       await deleteSlide(slide.id, id);
       await refetch();
-      setCurrentSlide((i) => Math.max(0, i - 1));
+      setCurrentSlideIndex((i) => Math.max(0, i - 1));
     } catch (err) {
       console.error('Delete slide failed:', err);
     }
@@ -83,10 +75,10 @@ export default function DeckEditor() {
           <PresentationMeta presentation={presentation} onChanged={refetch} />
           <SlideList
             slides={slides}
-            currentIndex={safeIndex}
+            currentIndex={currentSlideIndex}
             onSelect={(i) => {
-              if (i === safeIndex) return;
-              if (confirmNavigation()) setCurrentSlide(i);
+              if (i === currentSlideIndex) return;
+              if (confirmNavigation()) setCurrentSlideIndex(i);
             }}
             onDelete={handleDeleteSlide}
             presentationId={id}
@@ -96,8 +88,8 @@ export default function DeckEditor() {
         <div className="col-md-8">
           {slides.length > 0 ? (
             <SlideEditor
-              key={slides[safeIndex].id}
-              slide={slides[safeIndex]}
+              key={currentSlide.id}
+              slide={currentSlide}
               onChanged={refetch}
               onDirtyChange={setEditorDirty}
             />

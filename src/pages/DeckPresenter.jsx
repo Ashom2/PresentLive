@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPresentationAndSlides, isPoll } from '../api/client';
-import { useApi } from '../hooks/useApi';
+import { useDeck } from '../hooks/useDeck';
 import SlideDisplay from '../components/SlideDisplay';
 import PollResults from '../components/PollResults';
 import AttendanceDisplay from '../components/AttendanceDisplay';
@@ -18,19 +16,11 @@ export default function DeckPresenter() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const { data: presentation, loading, error } = useApi(
-    () => getPresentationAndSlides(id),
-    [id]
-  );
-
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <div className="alert alert-danger">{error}</div>;
-  if (!presentation) return <p>Presentation not found.</p>;
-
-  const slides = Array.isArray(presentation.slides) ? presentation.slides : [];
-  const safeIndex = slides.length ? Math.min(currentSlide, slides.length - 1) : 0;
+  const deck = useDeck(id);
+  if (deck.status === 'loading') return <p>Loading...</p>;
+  if (deck.status === 'error') return <div className="alert alert-danger">{deck.error}</div>;
+  if (deck.status === 'not-found') return <p>Presentation not found.</p>;
+  const { presentation, slides, currentSlide, currentSlideIndex, setCurrentSlideIndex, currentSlideIsPoll } = deck;
 
   return (
     <div className="page-box">
@@ -46,20 +36,20 @@ export default function DeckPresenter() {
 
       {slides.length > 0 ? (
         <SlideDisplay
-          markdown={slides[safeIndex].body}
-          index={safeIndex}
+          markdown={currentSlide.body}
+          index={currentSlideIndex}
           total={slides.length}
-          onPrev={() => setCurrentSlide((i) => Math.max(0, i - 1))}
-          onNext={() => setCurrentSlide((i) => Math.min(slides.length - 1, i + 1))}
+          onPrev={() => setCurrentSlideIndex((i) => Math.max(0, i - 1))}
+          onNext={() => setCurrentSlideIndex((i) => Math.min(slides.length - 1, i + 1))}
         />
       ) : (
         <p className="text-muted">No slides to present yet.</p>
       )}
 
-      {isPoll(slides[safeIndex]) && (
-        <PollResults slideId={slides[safeIndex].id} intervalMs={3000} showAttendees={true} />
+      {currentSlideIsPoll && (
+        <PollResults slideId={currentSlide.id} intervalMs={3000} showAttendees={true} />
       )}
-
+      
       <AttendanceDisplay 
         presentationId={presentation.id}
       />

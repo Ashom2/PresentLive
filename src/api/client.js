@@ -412,5 +412,5 @@ export async function getPresentationAndSlides(id) {
   const presentation = await getPresentation(id);
   const slideIds = Array.isArray(presentation.slides) ? presentation.slides : [];
   const slides = await Promise.all(slideIds.map((slideId) => getSlide(slideId)));
-  return { ...presentation, slides };
+  return { presentation, slides };
 }

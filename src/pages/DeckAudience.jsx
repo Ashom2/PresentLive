@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getPresentationAndSlides, submitPollResponse } from '../api/client';
-import { useApi } from '../hooks/useApi';
+import { submitPollResponse } from '../api/client';
+import { useDeck } from '../hooks/useDeck';
 import SlideDisplay from '../components/SlideDisplay';
 import PollDisplay from '../components/PollDisplay';
 
@@ -21,33 +20,23 @@ export default function DeckAudience() {
   const attendeeName = location.state?.attendeeName ?? 'Anonymous';
   const attendeeId = location.state?.attendeeId;
 
-  const { data: presentation, loading, error } = useApi(
-    () => getPresentationAndSlides(id),
-    [id]
-  );
-
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <div className="alert alert-danger">{error}</div>;
-  if (!presentation) return <p>Presentation not found.</p>;
-
-  const slides = Array.isArray(presentation.slides) ? presentation.slides : [];
-  const safeIndex = slides.length ? Math.min(currentSlide, slides.length - 1) : 0;
-  const currentSlideData = slides[safeIndex];
-  const isPoll = currentSlideData?.type === 'Poll';
+  const deck = useDeck(id);
+  if (deck.status === 'loading') return <p>Loading...</p>;
+  if (deck.status === 'error') return <div className="alert alert-danger">{deck.error}</div>;
+  if (deck.status === 'not-found') return <p>Presentation not found.</p>;
+  const { presentation, slides, currentSlide, currentSlideIndex, setCurrentSlideIndex, currentSlideIsPoll } = deck;
 
   function goPrev() {
-    setCurrentSlide((i) => Math.max(0, i - 1));
+    setCurrentSlideIndex((i) => Math.max(0, i - 1));
   }
 
   function goNext() {
-    setCurrentSlide((i) => Math.min(slides.length - 1, i + 1));
+    setCurrentSlideIndex((i) => Math.min(slides.length - 1, i + 1));
   }
 
   async function handlePollSubmit(optionIndex) {
     await submitPollResponse(
-      currentSlideData.id,
+      currentSlide.id,
       attendeeId,
       optionIndex
     );
@@ -71,16 +60,16 @@ export default function DeckAudience() {
       ) : (
         <>
           <SlideDisplay
-            markdown={currentSlideData.body}
-            index={safeIndex}
+            markdown={currentSlide.body}
+            index={currentSlideIndex}
             total={slides.length}
             onPrev={goPrev}
             onNext={goNext}
           />
 
-          {isPoll && (
+          {currentSlideIsPoll && (
             <PollDisplay
-              slide={currentSlideData}
+              slide={currentSlide}
               onSubmit={handlePollSubmit}
             />
           )}
