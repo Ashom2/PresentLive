@@ -36,7 +36,7 @@ export function useDeck(id) {
     ? Math.min(currentSlideIndex, safeSlides.length - 1)
     : 0;
   const currentSlide = safeSlides[safeIndex] ?? null;
-  const currentSlideIsPoll = isPoll(currentSlide);
+  const currentSlideIsPoll = currentSlide ? isPoll(currentSlide) : false;
 
   return {
     status: 'ready',
