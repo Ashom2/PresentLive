@@ -193,7 +193,7 @@ function DeckView({ attendee, mode }) {
               slide={currentSlide}
               attendeeId={attendeeId}
               onSubmit={isAudience ? handlePollSubmit : undefined}
-              readOnly={!isAudience}
+              disabled={!isAudience}
             />
           )}
 
