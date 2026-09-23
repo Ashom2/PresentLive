@@ -14,10 +14,11 @@ import DeleteButton from '../components/DeleteButton';
 export default function PresentationManager() {
   const navigate = useNavigate();
 
-  const { data: presentations, loading, error, refetch } = useApi(getAllPresentations);
-
+  const { data, loading, error, refetch } = useApi(getAllPresentations);
   if (loading) return <p>Loading...</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
+  if (!data) return <p>Presentations not found.</p>;
+  const presentations = data;
 
   return (
     <div className="page-box">

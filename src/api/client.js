@@ -285,6 +285,7 @@ export async function createAttendee(name, presentation) {
   const body = {
     name: name,
     status: "Viewing",
+    slide_index: 0,
   }
   const attendee = await requestEntity('/attendee', { method: 'POST', body: body });
 

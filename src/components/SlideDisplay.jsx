@@ -12,7 +12,7 @@
  */
 export default function SlideDisplay({ markdown, index, total, onPrev, onNext }) {
   return (
-    <div className="simple-border bg-light p-0 mb-2">
+    <div className="simple-border bg-light p-0 mb-2" style={{ height: "500px" }}>
       <div className="bg-secondary bg-opacity-10 border-top d-flex justify-content-between align-items-center p-3">
         <button
           className="btn btn-sm btn-outline-secondary"
@@ -21,7 +21,7 @@ export default function SlideDisplay({ markdown, index, total, onPrev, onNext })
         >
           ← Previous
         </button>
-        <span className="small fw-semibold text-secondary">
+        <span className="fw-semibold text-secondary">
           Slide {index + 1} of {total}
         </span>
         <button
