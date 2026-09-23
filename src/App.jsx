@@ -38,11 +38,11 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/decks" element={<PresentationManager />} />
           <Route path="/decks/create" element={<DeckCreate />} />
-          <Route path="/decks/edit/:id" element={<DeckEditor />} />
-          <Route path="/decks/present/:id" element={<DeckPresenter />} />
-          <Route path="/decks/view/:id" element={<DeckAudience />} />
-          <Route path="/decks/review/:id" element={<DeckReview />} />
-          <Route path="/decks/results/:id" element={<DeckResults />} />
+          <Route path="/decks/edit/:presentationId" element={<DeckEditor />} />
+          <Route path="/decks/present/:presentationId" element={<DeckPresenter />} />
+          <Route path="/decks/view/:presentationId" element={<DeckAudience />} />
+          <Route path="/decks/review/:presentationId" element={<DeckReview />} />
+          <Route path="/decks/results/:presentationId" element={<DeckResults />} />
           <Route path="/join" element={<Join />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>

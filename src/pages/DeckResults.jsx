@@ -12,7 +12,7 @@ import { BackButton } from '../components/Buttons';
 export default function AttendeeResults() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams();
+  const { presentationId } = useParams();
 
   const attendeeId = location.state?.attendeeId;
 
@@ -35,7 +35,7 @@ export default function AttendeeResults() {
         </BackButton>
         <button
           className="btn btn-outline-primary"
-          onClick={() => navigate(`/decks/review/${id}`, { state: { attendeeId } })}
+          onClick={() => navigate(`/decks/review/${presentationId}`, { state: { attendeeId } })}
         >
           Review slides
         </button>

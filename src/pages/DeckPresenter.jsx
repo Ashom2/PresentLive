@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useDeck } from '../hooks/useDeck';
 import SlideDisplay from '../components/SlideDisplay';
 import PollResults from '../components/PollResults';
@@ -14,10 +14,9 @@ import { BackButton } from '../components/Buttons';
  * @returns {JSX.Element} The presenter page.
  */
 export default function DeckPresenter() {
-  const navigate = useNavigate();
-  const { id } = useParams();
+  const { presentationId } = useParams();
 
-  const deck = useDeck(id);
+  const deck = useDeck(presentationId);
   if (deck.status === 'loading') return <p>Loading...</p>;
   if (deck.status === 'error') return <div className="alert alert-danger">{deck.error}</div>;
   if (deck.status === 'not-found') return <p>Presentation not found.</p>;

@@ -103,13 +103,13 @@ export function DeckReview() {
  */
 function DeckViewer({ attendee, mode }) {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { presentationId } = useParams();
 
   const attendeeId = attendee.id;
   const attendeeName = attendee.name ?? 'Anonymous';
   const attendeeSlideIndex = attendee.slide_index ?? 0;
 
-  const deck = useDeck(id, attendeeSlideIndex);
+  const deck = useDeck(presentationId, attendeeSlideIndex);
   if (deck.status === 'loading') return <p>Loading…</p>;
   if (deck.status === 'error') return <div className="alert alert-danger">{deck.error}</div>;
   if (deck.status === 'not-found') return <p>Presentation not found.</p>;
@@ -161,7 +161,7 @@ function DeckViewer({ attendee, mode }) {
       console.error('Could not update attendee status:', err);
     }
 
-    navigate(`/decks/results/${id}`, {
+    navigate(`/decks/results/${presentationId}`, {
       state: { attendeeId: attendee.id },
     });
   }
@@ -173,7 +173,7 @@ function DeckViewer({ attendee, mode }) {
       <div className="d-flex justify-content-between mb-3">
         <BackButton
           to={
-            isAudience ? '/' : `/decks/results/${id}`
+            isAudience ? '/' : `/decks/results/${presentationId}`
           }
           state={{ attendeeId: attendee.id }}
         >

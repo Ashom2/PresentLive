@@ -9,10 +9,10 @@ import { DeleteButton, BackButton } from '../components/Buttons';
 
 export default function DeckEditor() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { presentationId } = useParams();
   const [editorDirty, setEditorDirty] = useState(false);
   
-  const deck = useDeck(id);
+  const deck = useDeck(presentationId);
   if (deck.status === 'loading') return <p>Loading...</p>;
   if (deck.status === 'error') return <div className="alert alert-danger">{deck.error}</div>;
   if (deck.status === 'not-found') return <p>Presentation not found.</p>;
@@ -78,7 +78,7 @@ export default function DeckEditor() {
               if (confirmNavigation()) setCurrentSlideIndex(i);
             }}
             onDelete={handleDeleteSlide}
-            presentationId={id}
+            presentationId={presentationId}
             onAdded={handleAdded}
           />
         </div>
