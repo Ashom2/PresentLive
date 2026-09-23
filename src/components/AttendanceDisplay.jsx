@@ -1,4 +1,3 @@
-import { useApi } from '../hooks/useApi';
 import { getPresentationAttendees } from '../api/client';
 import SectionCard from './SectionCard';
 import DataTable from './DataTable';
@@ -21,6 +20,7 @@ export default function AttendanceDisplay({ presentationId }) {
         columns={[
           { key: 'name', label: 'Name', linkTo: (row) => `/attendee/${row.id}` },
           { key: 'status', label: 'Status' },
+          { key: 'slide_index', label: 'Slide Index'},
         ]}
         rowKey={(row) => row.id}
       />

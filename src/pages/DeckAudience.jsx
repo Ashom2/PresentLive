@@ -8,7 +8,9 @@ import PollDisplay from '../components/PollDisplay';
 /**
  * Audience view for a deck.
  *
- * Lets an attendee step through slides and answer poll slides.
+ * Loads the attendee first, then mounts the slide viewer once their
+ * starting position is known. Attendees step forward only, and poll
+ * answers lock once submitted.
  *
  * @component
  * @returns {JSX.Element} The audience page.
@@ -20,7 +22,7 @@ export default function DeckAudience() {
   const attendeeId = location.state?.attendeeId;
 
   const { data: attendee, loading, error } = useApi(
-    () => getAttendee(attendeeId),
+    () => attendeeId ? getAttendee(attendeeId) : Promise.resolve(null),
     [attendeeId]
   );
   if (loading) return <p>Loading...</p>;
@@ -75,6 +77,23 @@ function AudienceView({ attendee }) {
     );
   }
 
+  /**
+   * Marks the attendee as finished and navigates to the results page.
+   */
+  async function handleFinish() {
+    try {
+      await updateAttendee(attendee.id, { status: 'Finished' });
+    } catch (err) {
+      // Don't block navigation on the status update failing — the attendee
+      // has already seen every slide. Log and continue.
+      console.error('Could not update attendee status:', err);
+    }
+
+    navigate(`/decks/results/${id}`, {
+      state: { attendeeId: attendee.id },
+    });
+  }
+  
   return (
     <div className="page-box">
       <div className="page-title text-center h4">Audience view - {presentation.title}</div>
@@ -97,6 +116,7 @@ function AudienceView({ attendee }) {
             index={currentSlideIndex}
             total={slides.length}
             onNext={goNext}
+            onFinish={handleFinish}
           />
 
           {currentSlideIsPoll && (
