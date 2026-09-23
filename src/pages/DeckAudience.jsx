@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getAttendee, submitPollResponse, updateAttendee } from '../api/client';
 import { useDeck } from '../hooks/useDeck';
@@ -15,8 +16,10 @@ import PollDisplay from '../components/PollDisplay';
  * @component
  * @returns {JSX.Element} The audience page.
  */
-export default function DeckAudience() {
+export function DeckAudience() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { presentationId } = useParams();
 
   // Get the attendee's ID from router state (placeholder)
   const attendeeId = location.state?.attendeeId;
@@ -25,22 +28,79 @@ export default function DeckAudience() {
     () => attendeeId ? getAttendee(attendeeId) : Promise.resolve(null),
     [attendeeId]
   );
+
+  useEffect(() => {
+    if (!loading && !attendee) {
+      navigate('/join', { state: { code: presentationId } });
+    }
+  }, [loading, attendee, navigate, presentationId]);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
   if (!attendee) return <p>Attendee not found.</p>;
 
-  return <AudienceView attendee={attendee} />;
+  return (
+    <DeckViewer
+      attendee={attendee}
+      mode="audience"
+    />
+  );
 }
 
 /**
- * Slide viewer for a loaded attendee.
+ * Review view for a deck.
+ *
+ * Lets a finished attendee browse back and forth through slides.
+ * Polls are shown read-only.
+ *
+ * @component
+ * @returns {JSX.Element} The review page.
+ */
+export function DeckReview() {
+
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { presentationId } = useParams();
+
+  // Get the attendee's ID from router state (placeholder)
+  const attendeeId = location.state?.attendeeId;
+
+  const { data: attendee, loading, error } = useApi(
+    () => attendeeId ? getAttendee(attendeeId) : Promise.resolve(null),
+    [attendeeId]
+  );
+
+  useEffect(() => {
+    if (!loading && !attendee) {
+      navigate('/join', { state: { code: presentationId } });
+    }
+  }, [loading, attendee, navigate, presentationId]);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
+  if (!attendee) return <p>Attendee not found.</p>;
+
+  return (
+    <DeckViewer
+      attendee={attendee}
+      mode="review"
+    />
+  );
+}
+
+/**
+ * Slide viewer shared by the audience and review views.
+ *
+ * In 'audience' mode, navigation is forward-only and poll answers are
+ * submitted. In 'review' mode, navigation is free and polls are read-only.
  *
  * @component
  * @param {Object} props
  * @param {Object} props.attendee - The loaded attendee.
+ * @param {'audience'|'review'} props.mode - Which behaviour to use.
  * @returns {JSX.Element}
  */
-function AudienceView({ attendee }) {
+function DeckViewer({ attendee, mode }) {
   const navigate = useNavigate();
   const { id } = useParams();
 
@@ -54,11 +114,19 @@ function AudienceView({ attendee }) {
   if (deck.status === 'not-found') return <p>Presentation not found.</p>;
   const { presentation, slides, currentSlide, currentSlideIndex, setCurrentSlideIndex, currentSlideIsPoll } = deck;
 
+  const isAudience = mode === 'audience';
+
+  function goPrev() {
+    setCurrentSlideIndex((i) => Math.max(0, i - 1));
+  }
+
   async function goNext() {
     const next = Math.min(slides.length - 1, currentSlideIndex + 1);
     if (next === currentSlideIndex) return;
 
     setCurrentSlideIndex(next);
+
+    if (!isAudience) return;
 
     if (attendeeId) {
       try {
@@ -70,6 +138,7 @@ function AudienceView({ attendee }) {
   }
 
   async function handlePollSubmit(optionIndex) {
+    if (!isAudience) return;
     await submitPollResponse(
       currentSlide.id,
       attendeeId,
@@ -81,6 +150,8 @@ function AudienceView({ attendee }) {
    * Marks the attendee as finished and navigates to the results page.
    */
   async function handleFinish() {
+    if (!isAudience) return;
+
     try {
       await updateAttendee(attendee.id, { status: 'Finished' });
     } catch (err) {
@@ -93,16 +164,19 @@ function AudienceView({ attendee }) {
       state: { attendeeId: attendee.id },
     });
   }
-  
+
   return (
     <div className="page-box">
-      <div className="page-title text-center h4">Audience view - {presentation.title}</div>
+      <div className="page-title text-center h4">
+        {isAudience ? 'Audience view' : 'Review'} - {presentation.title}</div>
       <div className="d-flex justify-content-between mb-3">
         <button
           className="btn btn-outline-secondary"
-          onClick={() => navigate('/')}
+          onClick={() => navigate(isAudience ? '/' : `/decks/results/${id}`, {
+            state: { attendeeId: attendee.id },
+          })}
         >
-          ← Exit presentation
+          {isAudience ? '← Exit presentation' : '← Back to results'}
         </button>
         <span className="text-muted">Display name: {attendeeName}</span>
       </div>
@@ -115,14 +189,17 @@ function AudienceView({ attendee }) {
             markdown={currentSlide.body}
             index={currentSlideIndex}
             total={slides.length}
+            onPrev={isAudience ? undefined : goPrev}
             onNext={goNext}
-            onFinish={handleFinish}
+            onFinish={isAudience ? handleFinish : undefined}
           />
 
           {currentSlideIsPoll && (
             <PollDisplay
               slide={currentSlide}
+              attendeeId={attendee.id} //TODO
               onSubmit={handlePollSubmit}
+              readOnly={!isAudience}//TODO
             />
           )}
         </>

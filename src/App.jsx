@@ -3,10 +3,11 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
 import PresentationManager from './pages/DeckManager';
+import DeckCreate from './pages/DeckCreate';
 import DeckEditor from './pages/DeckEditor';
 import DeckPresenter from './pages/DeckPresenter';
-import DeckAudience from './pages/DeckAudience';
-import DeckCreate from './pages/DeckCreate';
+import { DeckAudience, DeckReview } from './pages/DeckAudience';
+import DeckResults from './pages/DeckResults';
 import Join from './pages/Join';
 import Admin from './pages/Admin';
 
@@ -36,11 +37,13 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/decks" element={<PresentationManager />} />
+          <Route path="/decks/create" element={<DeckCreate />} />
           <Route path="/decks/edit/:id" element={<DeckEditor />} />
           <Route path="/decks/present/:id" element={<DeckPresenter />} />
           <Route path="/decks/view/:id" element={<DeckAudience />} />
+          <Route path="/decks/review/:id" element={<DeckReview />} />
+          <Route path="/decks/results/:id" element={<DeckResults />} />
           <Route path="/join" element={<Join />} />
-          <Route path="/decks/create" element={<DeckCreate />} />
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </main>

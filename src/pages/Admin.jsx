@@ -1,3 +1,14 @@
+/**
+ * TODO list:
+ * page for previewing/reviewing presentation (can go forward and backward) without submitting poll responses
+ * link to info/data pages for each:
+ *    presentation
+ *    attendee
+ *    slide
+ *    poll response
+ * 
+ */
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../hooks/useApi';
