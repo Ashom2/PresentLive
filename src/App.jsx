@@ -30,6 +30,7 @@ export default function App() {
 
   return (
     <Router>
+      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <Header brandText="PresentLive" navLinks={navLinks} />
       <main className="app-main">
         <Routes>
