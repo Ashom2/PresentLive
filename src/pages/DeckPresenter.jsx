@@ -3,6 +3,7 @@ import { useDeck } from '../hooks/useDeck';
 import SlideDisplay from '../components/SlideDisplay';
 import PollResults from '../components/PollResults';
 import AttendanceDisplay from '../components/AttendanceDisplay';
+import { BackButton } from '../components/Buttons';
 
 /**
  * Presenter view for a deck.
@@ -26,12 +27,9 @@ export default function DeckPresenter() {
     <div className="page-box">
       <div className="page-title text-center h4">Presenter view - {presentation.title}</div>
       <div className="d-flex justify-content-between mb-3">
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => navigate('/decks')}
-        >
-          ← Back to presentations
-        </button>
+        <BackButton to={"/decks"}>
+          Back to presentations
+        </BackButton>
       </div>
 
       {slides.length > 0 ? (

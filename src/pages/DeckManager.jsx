@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../hooks/useApi'
 import { getAllPresentations, deletePresentation } from '../api/client';
-import { DeleteButton } from '../components/Buttons';
+import { DeleteButton, BackButton } from '../components/Buttons';
 
 /**
  * Manage presentations page.
@@ -24,12 +24,9 @@ export default function PresentationManager() {
     <div className="page-box">
       <div className="page-title text-center h4">My presentations</div>
       <div className="d-flex justify-content-between mb-3">
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => navigate('/')}
-        >
-          ← Home
-        </button>
+        <BackButton to={"/"}>
+          Home
+        </BackButton>
         <button
           className="btn btn-primary"
           onClick={() => navigate('/decks/create')}

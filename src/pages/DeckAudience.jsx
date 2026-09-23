@@ -5,6 +5,7 @@ import { useDeck } from '../hooks/useDeck';
 import { useApi } from '../hooks/useApi'
 import SlideDisplay from '../components/SlideDisplay';
 import PollDisplay from '../components/PollDisplay';
+import { BackButton } from '../components/Buttons';
 
 /**
  * Audience view for a deck.
@@ -170,14 +171,14 @@ function DeckViewer({ attendee, mode }) {
       <div className="page-title text-center h4">
         {isAudience ? 'Audience view' : 'Review'} - {presentation.title}</div>
       <div className="d-flex justify-content-between mb-3">
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => navigate(isAudience ? '/' : `/decks/results/${id}`, {
-            state: { attendeeId: attendee.id },
-          })}
+        <BackButton
+          to={
+            isAudience ? '/' : `/decks/results/${id}`
+          }
+          state={{ attendeeId: attendee.id }}
         >
-          {isAudience ? '← Exit presentation' : '← Back to results'}
-        </button>
+          {isAudience ? 'Exit presentation' : 'Back to results'}
+        </BackButton>
         <span className="text-muted">Display name: {attendeeName}</span>
       </div>
 

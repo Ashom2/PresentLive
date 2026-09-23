@@ -5,7 +5,7 @@ import { useDeck } from '../hooks/useDeck';
 import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
 import SlideEditor from '../components/SlideEditor'
-import { DeleteButton } from '../components/Buttons';
+import { DeleteButton, BackButton } from '../components/Buttons';
 
 export default function DeckEditor() {
   const navigate = useNavigate();
@@ -47,12 +47,9 @@ export default function DeckEditor() {
     <div className="page-box">
       <div className="page-title text-center h4">Presentation editor - {presentation.title}</div>
       <div className="d-flex justify-content-between mb-3">
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => { if (confirmNavigation()) navigate('/decks'); }}
-        >
-          ← Back to presentations
-        </button>
+        <BackButton to={"/decks"} onClick={() => confirmNavigation()}>
+          My presentations
+        </BackButton>
         <div className="d-flex gap-1">
           <button
             className="btn btn-outline-success"

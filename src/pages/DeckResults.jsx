@@ -1,7 +1,7 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useApi } from '../hooks/useApi';
 import { getAttendee } from '../api/client';
-import SectionCard from '../components/SectionCard';
+import { BackButton } from '../components/Buttons';
 
 /**
  * Results page shown to an attendee after finishing a presentation.
@@ -30,12 +30,9 @@ export default function AttendeeResults() {
       <div className="page-title text-center h4">You're finished!</div>
       <div>Your responses have been recorded.</div>
       <div className="d-flex gap-2">
-        <button
-          className="btn btn-outline-secondary"
-          onClick={() => navigate('/')}
-        >
+        <BackButton to={"/"}>
           Back to home
-        </button>
+        </BackButton>
         <button
           className="btn btn-outline-primary"
           onClick={() => navigate(`/decks/review/${id}`, { state: { attendeeId } })}

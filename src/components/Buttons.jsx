@@ -1,5 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createSlide } from '../api/client';
+
 
 /**
  * Button that creates a default slide and refetches the deck.
@@ -132,6 +134,43 @@ export function DeleteButton({
       disabled={deleting}
       >
       {deleting ? '...' : children}
+    </button>
+  );
+}
+
+/**
+ * Back button that navigates to a given route or back in history.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} [props.to] - Route to navigate to. If omitted, uses browser back.
+ * @param {Object} [props.state] - Router state to pass when navigating.
+ * @param {Function} [props.onClick] - Optional side effect before navigation.
+ * @param {React.ReactNode} [props.children='Back'] - Body content, the text on the button.
+ * @returns {JSX.Element} The back button.
+ */
+export function BackButton({
+  to,
+  state,
+  onClick,
+  children = "Back",
+}) {
+  const navigate = useNavigate();
+
+  function handleClick() {
+    // If onClick returns false, treat it as an order to cancel navigation
+    if (onClick?.() === false) return;
+
+    if (to) {
+      navigate(to, { state });
+    } else {
+      navigate(-1);
+    }
+  }
+
+  return (
+    <button className="btn btn-outline-secondary" onClick={handleClick}>
+      ← {children}
     </button>
   );
 }
