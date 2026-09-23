@@ -174,3 +174,27 @@ export function BackButton({
     </button>
   );
 }
+
+export function PresentButton({
+  presentationId,
+  onClick,
+  children = "Present",
+}) {
+const navigate = useNavigate();
+  function handleClick() {
+    // If onClick returns false, treat it as an order to cancel navigation
+    if (onClick?.() === false) return;
+
+    if (presentationId) {
+      navigate(`/decks/present/${presentationId}`);
+    } else {
+      navigate(-1);
+    }
+  }
+
+  return (
+    <button className="btn btn-outline-success" onClick={handleClick}>
+      {children}
+    </button>
+  );
+}

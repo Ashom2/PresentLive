@@ -5,7 +5,7 @@ import { useDeck } from '../hooks/useDeck';
 import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
 import SlideEditor from '../components/SlideEditor'
-import { DeleteButton, BackButton } from '../components/Buttons';
+import { DeleteButton, BackButton, PresentButton } from '../components/Buttons';
 
 export default function DeckEditor() {
   const navigate = useNavigate();
@@ -56,12 +56,7 @@ export default function DeckEditor() {
           My presentations
         </BackButton>
         <div className="d-flex gap-1">
-          <button
-            className="btn btn-outline-success"
-            onClick={() => { if (confirmNavigation()) navigate(`/decks/present/${presentation.id}`); }}
-          >
-            Present
-          </button>
+          <PresentButton presentationId={presentation.id} onClick={() => confirmNavigation()} />
           <DeleteButton
             confirmMessage={`Delete "${presentation.title}"? This cannot be undone.`}
             onDelete={() => deletePresentation(presentation.id)}

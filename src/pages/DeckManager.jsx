@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../hooks/useApi'
 import { getAllPresentations, deletePresentation } from '../api/client';
-import { DeleteButton, BackButton } from '../components/Buttons';
+import { DeleteButton, BackButton, PresentButton } from '../components/Buttons';
 
 /**
  * Manage presentations page.
@@ -50,12 +50,7 @@ export default function PresentationManager() {
               >
                 Edit
               </button>
-              <button
-                className="btn btn-outline-success"
-                onClick={() => navigate(`/decks/present/${presentation.id}`)}
-              >
-                Present
-              </button>
+              <PresentButton presentationId={presentation.id} />
               <DeleteButton
                 onDelete={() => deletePresentation(presentation.id)}
                 onDeleted={refetch}
