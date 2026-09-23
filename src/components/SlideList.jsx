@@ -31,9 +31,7 @@ export default function SlideList({ slides, currentIndex, onSelect, onDelete, pr
             <DeleteButton 
               onDelete={() => onDelete(slide)}
               tooltip="Delete slide"
-            >
-              x
-            </DeleteButton>
+            />
           </div>
         ))}
       </div>

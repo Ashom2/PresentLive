@@ -38,7 +38,7 @@ export default function DeleteButton({
   }
 
   return (
-    <button className="btn btn-sm btn-outline-danger py-0 px-2" 
+    <button className="btn btn-outline-danger py-0 px-2" 
       onClick={handleClick}
       title={tooltip}
       disabled={deleting}

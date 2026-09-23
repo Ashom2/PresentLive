@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { updateSlide, updateSlidePoll } from '../api/client';
 import SectionCard from './SectionCard';
+import DeleteButton from './DeleteButton';
 
 /**
  * Editor for a single slide. Edits are held locally and applied
@@ -164,14 +165,10 @@ export default function SlideEditor({ slide, onChanged, onDirtyChange }) {
                   disabled={saving}
                   placeholder={`Option ${i + 1}`}
                 />
-                <button
-                  className="btn btn-sm btn-outline-danger py-0 px-2"
-                  onClick={() => handleRemoveOption(i)}
-                  disabled={saving}
-                  title="Remove option"
-                >
-                  ×
-                </button>
+                <DeleteButton 
+                  onDelete={() => {handleRemoveOption(i)}}
+                  tooltip="Remove option"
+                />
               </div>
             ))}
             <button
