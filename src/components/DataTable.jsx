@@ -1,42 +1,27 @@
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useApi } from '../hooks/useApi';
-import SectionCard from './SectionCard';
 
 /**
- * Fetches and displays tabular data.
+ * Renders tabular data.
  *
  * @component
  * @param {Object} props
- * @param {Function} props.fetcher - Async function that returns an array of rows.
- * @param {Array} props.deps - Dependencies for the fetch (like useApi).
- * @param {Array<{ key, label, linkTo? }>} props.columns - Column definitions.
  * @param {string} props.title - Section card title.
- * @param {Function} [props.rowKey] - Unique key per row. Defaults to index.
- * @returns {JSX.Element} The table panel.
+ * @param {Array<{ key: string, label: string, linkTo?: (row: Object) => string }>} props.columns
+ *   Column definitions. If `linkTo` is present, the cell renders as a link.
+ * @param {Array<Object>} props.rows - Row data.
+ * @param {Function} [props.rowKey] - Returns a unique key for a row. Defaults to index.
+ * @param {string} [props.emptyMessage='Nothing to show.'] - Message when there are no rows.
+ * @returns {JSX.Element}
  */
-export default function DataTable({ fetcher, deps = [], columns, title, rowKey }) {
-  const navigate = useNavigate();
-  const { data, loading, error } = useApi(fetcher, deps);
-
-  if (loading) {
-    return <div className="mb-2">Loading...</div>;
+export function DataTable({ title, columns, rows, rowKey, emptyMessage = 'Nothing to show.' }) {
+  if (!rows || rows.length === 0) {
+    return <div className="p-2 text-muted small">{emptyMessage}</div>;
   }
-  if (error) {
-    return (
-      <div title={title} className="mb-2">
-        <span className="text-danger small">{error}</span>
-      </div>
-    );
-  }
-
-  const rows = Array.isArray(data) ? data : [];
 
   return (
     <div title={title} className="mb-2">
-      {rows.length === 0 ? (
-        <div className="p-2 text-muted small">Nothing to show.</div>
-      ) : (
-        <div className="table-responsive">
+      <div className="table-responsive">
         <table className="table table-sm table-hover align-middle mb-0">
           <thead className="table-light">
             <tr>
@@ -53,13 +38,7 @@ export default function DataTable({ fetcher, deps = [], columns, title, rowKey }
                   const to = col.linkTo?.(row);
                   return (
                     <td key={col.key}>
-                      {to ? (
-                        <Link to={to}>
-                          {value}
-                        </Link>
-                      ) : (
-                        value
-                      )}
+                      {to ? <Link to={to}>{value}</Link> : value}
                     </td>
                   );
                 })}
@@ -67,8 +46,58 @@ export default function DataTable({ fetcher, deps = [], columns, title, rowKey }
             ))}
           </tbody>
         </table>
-        </div>
-      )}
+      </div>
     </div>
+  );
+}
+
+
+
+/**
+ * Fetches rows and displays them in a table panel.
+ *
+ * @component
+ * @param {Object} props
+ * @param {string} props.title - Section card title.
+ * @param {Function} props.fetcher - Async function that returns an array of rows.
+ * @param {Array} [props.deps=[]] - Dependencies for the fetch.
+ * @param {Array} props.columns - Column definitions (see DataTable).
+ * @param {Function} [props.rowKey] - Unique key per row. Defaults to index.
+ * @param {string} [props.emptyMessage] - Message when there are no rows.
+ * @returns {JSX.Element}
+ */
+export function FetchedDataTable({
+  title,
+  fetcher,
+  deps = [],
+  columns,
+  rowKey,
+  emptyMessage,
+}) {
+  const { data, loading, error } = useApi(fetcher, deps);
+
+  if (loading) {
+    return <div title={title} className="mb-2">
+      Loading...
+    </div>;
+  }
+  if (error) {
+    return (
+      <div title={title} className="mb-2">
+        <span className="text-danger small">{error}</span>
+      </div>
+    );
+  }
+
+  const rows = Array.isArray(data) ? data : [];
+
+  return (
+    <DataTable
+      title={title}
+      columns={columns}
+      rows={rows}
+      rowKey={rowKey}
+      emptyMessage={emptyMessage}
+    />
   );
 }

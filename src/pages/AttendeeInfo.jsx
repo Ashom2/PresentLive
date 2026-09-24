@@ -1,85 +1,70 @@
-import { useNavigate, useParams, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi';
 import { getAttendeeAndPresentation } from '../api/client';
-import SectionCard from '../components/SectionCard';
-import DataTable from '../components/DataTable';
-import PollDisplay from '../components/PollDisplay';
+import { DataTable } from '../components/DataTable';
 
 export default function AttendeeInfo() {
-    const { attendeeId } = useParams();
+  const { attendeeId } = useParams();
 
-    const { data, loading, error, refetch } = useApi(
-        () => (attendeeId ? getAttendeeAndPresentation(attendeeId) : Promise.resolve(null)),
-        [attendeeId]
-    );
-    if (loading) return <p>Loading...</p>;
-    if (error) return <div className="alert alert-danger">{error}</div>;
-    if (!data) return <div className="alert alert-danger">No attendee found.</div>;
-    const { attendee, presentation, responses } = data;
+  const { data, loading, error, refetch } = useApi(
+    () => (attendeeId ? getAttendeeAndPresentation(attendeeId) : Promise.resolve(null)),
+    [attendeeId]
+  );
+  if (loading) return <p>Loading...</p>;
+  if (error) return <div className="alert alert-danger">{error}</div>;
+  if (!data) return <div className="alert alert-danger">Attendee not found.</div>;
+  const { attendee, presentation, responses } = data;
 
-    console.log(responses);
+  const isFinished = attendee.status === "Finished";
 
-    const isFinished = attendee.status === "Finished";
+  const responseColumns = [
+    { key: 'question', label: 'Question' },
+    { key: 'answer', label: 'Answer' },
+  ];
 
-    const slides = presentation.slides;
-    //how to connect slides and poll responses
+  const responseRows = responses.map((r) => ({
+    id: r.id,
+    question: r.poll?.question ?? '—',
+    answer: r.poll?.options?.[r.option_index] ?? '—',
+  }));
 
-    return (
-        <SectionCard title="Attendee Info">
-            <div className='fw-semibold'>
-                Name
-            </div>
-            <div>
-                {attendee.name}
-            </div>
+  return (
+    <div className="page-box">
+      <div className="page-title text-center h4">
+        Attendee info
+      </div>
 
-            <div className='fw-semibold'>
-                Attendee of
-            </div>
-            <div>
-                <Link to={`/decks/edit/${presentation.id}`}>
-                    {presentation.title}
-                </Link>
-            </div>
+      <div className="d-flex flex-column gap-1 mb-3">
+        <div>
+          <span className="fw-semibold me-2">Name</span>
+          <span>{attendee.name}</span>
+        </div>
+        <div>
+          <span className="fw-semibold me-2">Attendee of</span>
+          <Link to={`/decks/edit/${presentation.id}`}>{presentation.title}</Link>
+        </div>
+        <div>
+          <span className="fw-semibold me-2">Status</span>
+          <span>{attendee.status}</span>
+        </div>
+        {!isFinished && (
+          <div>
+            <span className="fw-semibold me-2">Slide index</span>
+            <span>{attendee.slide_index}</span>
+          </div>
+        )}
+      </div>
 
-            <div className='fw-semibold'>
-                Status
-            </div>
-            <div>
-                {attendee.status}
-            </div>
-
-            {!isFinished ? (
-                <>
-                    <div className='fw-semibold'>
-                        Slide index
-                    </div>
-                    <div>
-                        {attendee.slide_index}
-                    </div>
-                </>
-            ) : (
-                <>
-                </>
-            )}
-
-            <div className='fw-semibold'>
-                Poll responses
-            </div>
-
-            {responses.map((response, i) => (
-                <>
-                    <div>
-                        {response.poll.question}
-                    </div>
-                    <div>
-                        {response.poll.options}
-                    </div>
-                    <div>
-                        {response.option_index}
-                    </div>
-                </>
-            ))}
-        </SectionCard>
-    );
+      <div className="fw-semibold mb-2">Poll responses</div>
+      {responseRows.length === 0 ? (
+        <div className="text-muted small">No responses recorded.</div>
+      ) : (
+        <DataTable
+          columns={responseColumns}
+          rows={responseRows}
+          rowKey={(row) => row.id}
+        />
+      )}
+    </div>
+  );
 }

@@ -1,6 +1,6 @@
 import { getPresentationAttendees } from '../api/client';
 import SectionCard from './SectionCard';
-import DataTable from './DataTable';
+import { FetchedDataTable } from './DataTable';
 
 /**
  * Displays attendance for a presentation.
@@ -13,7 +13,7 @@ import DataTable from './DataTable';
 export default function AttendanceDisplay({ presentationId }) {
   return (
     <SectionCard title="Presentation Attendance" className="mb-2" bodyClassName="">
-      <DataTable
+      <FetchedDataTable
         title="Presentation attendees"
         fetcher={() => getPresentationAttendees(presentationId)}
         deps={[presentationId]}

@@ -28,7 +28,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ApiTestButton } from '../components/Buttons';
 import { createPresentation, getAllPresentations, getAllSlides, getAllAttendees, getAllPollResponses } from '../api/client';
-import DataTable from '../components/DataTable';
+import { FetchedDataTable } from '../components/DataTable';
 import SectionCard from '../components/SectionCard';
 
 /**
@@ -63,7 +63,7 @@ export default function Admin() {
       </SectionCard>
 
       <SectionCard title="Presentations" className="mb-2" bodyClassName="">
-        <DataTable
+        <FetchedDataTable
           title="All presentations"
           fetcher={getAllPresentations}
           deps={[]}
@@ -80,7 +80,7 @@ export default function Admin() {
       </SectionCard>
 
       <SectionCard title="Slides" className="mb-2" bodyClassName="">
-        <DataTable
+        <FetchedDataTable
           title="All slides"
           fetcher={getAllSlides}
           deps={[]}
@@ -95,7 +95,7 @@ export default function Admin() {
       </SectionCard>
 
       <SectionCard title="Attendees" className="mb-2" bodyClassName="">
-        <DataTable
+        <FetchedDataTable
           title="All attendees"
           fetcher={getAllAttendees}
           deps={[]}
@@ -109,7 +109,7 @@ export default function Admin() {
       </SectionCard>
 
       <SectionCard title="Poll Responses" className="mb-2" bodyClassName="">
-        <DataTable
+        <FetchedDataTable
           title="All poll responses"
           fetcher={getAllPollResponses}
           deps={[]}
