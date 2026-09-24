@@ -59,7 +59,6 @@ async function requestList(path, options) {
 }
 
 
-//TODO delete attendee
 
 
 
@@ -150,21 +149,25 @@ export async function getPresentationAttendees(presentationId) {
  * @param {string} id - Presentation id.
  * @returns {Promise<void>}
  */
-export async function deletePresentation(id) {
-  const presentation = await getPresentation(id);
+export async function deletePresentation(presentationId) {
+  const presentation = await getPresentation(presentationId);
 
   // Delete all slides and their poll responses
-  await Promise.all(presentation.slides.map(async (slideId) =>
-    deleteSlide(slideId, id, false)
+  const slideIds = (Array.isArray(presentation?.slides) ? presentation?.slides : [])
+    .filter((id) => typeof id === 'string' && id.length > 0);
+  await Promise.all(slideIds.map((slideId) =>
+    deleteSlide(slideId, presentationId, false)
   ));
 
   // Delete all attendees
-  await Promise.all(presentation.attendee_ids.map(async (attendeeId) =>
+  const attendeeIds = (Array.isArray(presentation?.attendee_ids) ? presentation?.attendee_ids : [])
+    .filter((id) => typeof id === 'string' && id.length > 0);
+  await Promise.all(attendeeIds.map((attendeeId) =>
     deleteAttendee(attendeeId)
   ));
 
   // Delete the presentation
-  await request(`/presentation/${id}`, { method: 'DELETE' });
+  await request(`/presentation/${presentationId}`, { method: 'DELETE' });
 }
 
 
@@ -215,7 +218,7 @@ export async function createSlide(presentationId, position) {
 
   // Append the slide's id to the presentation's slides array
   const presentation = await getPresentation(presentationId);
-  const existingIds = Array.isArray(presentation.slides) ? presentation.slides : [];
+  const existingIds = Array.isArray(presentation?.slides) ? presentation?.slides : [];
   await updatePresentation(presentationId, { slides: [...existingIds, slide.id] });
 
   return slide;
@@ -275,7 +278,7 @@ export async function deleteSlide(slideId, presentationId, removePresentationRef
   // Remove references to the slide's id in the presentation
   if (removePresentationRefs) {
     const presentation = await getPresentation(presentationId);
-    const remaining = (Array.isArray(presentation.slides) ? presentation.slides : []).filter(
+    const remaining = (Array.isArray(presentation?.slides) ? presentation?.slides : []).filter(
       (id) => id !== slideId
     );
     await updatePresentation(presentationId, { slides: remaining });
@@ -290,6 +293,26 @@ export async function deleteSlide(slideId, presentationId, removePresentationRef
 export function isPoll(slide) {
   return slide.type === "Poll";
 }
+/**
+ * Persists a new slide ordering by PATCHing each slide's position.
+ *
+ * @param {Array<Object>} slides - Slides in their new order.
+ * @param {string} presentationId - Id of the owning presentation.
+ * @returns {Promise<void>}
+ */
+export async function reorderSlides(slides, presentationId) {
+  await Promise.all(
+    slides.map((slide, index) =>
+      updateSlide(slide.id, { position: index })
+    )
+  );
+
+  const slideIds = slides.map((slide) => slide.id)
+  await updatePresentation(presentationId, {
+    slides: slideIds 
+  });
+}
+
 
 
 // Attendees --------------------------------------------------------
@@ -498,9 +521,6 @@ export async function deletePollResponseAndReferences(responseId, removeSlideRef
 
 
 
-
-
-
 // Other functions --------------------------------------------------------
 /**
  * Fetches a presentation and its slides as separate values.
@@ -510,7 +530,7 @@ export async function deletePollResponseAndReferences(responseId, removeSlideRef
  */
 export async function getPresentationAndSlides(id) {
   const presentation = await getPresentation(id);
-  const slideIds = Array.isArray(presentation.slides) ? presentation.slides : [];
+  const slideIds = Array.isArray(presentation?.slides) ? presentation?.slides : [];
   const slides = await Promise.all(slideIds.map((slideId) => getSlide(slideId)));
   return { presentation, slides };
 }
@@ -528,8 +548,7 @@ export async function getSlideResponse(slide, attendee) {
   if (!attendee?.id || responseIds.length === 0) return undefined;
   
   const all = await Promise.all(responseIds.map((responseId) => getPollResponse(responseId)));
-  const todo = all.find((response) => response?.attendee_id === attendee.id);
-  return todo;
+  return all.find((response) => response?.attendee_id === attendee.id);
 }
 
 /**
@@ -543,7 +562,7 @@ export async function getAttendeeAndPresentation(attendeeId) {
   const attendee = await getAttendee(attendeeId);
   const presentation = await getPresentation(attendee.presentation_id);
 
-  const slideIds = Array.isArray(presentation.slides) ? presentation.slides : [];
+  const slideIds = Array.isArray(presentation?.slides) ? presentation?.slides : [];
   const slides = await Promise.all(slideIds.map((slideId) => getSlide(slideId)));
 
   const allResponses = await Promise.all(slides.map((slide) => getSlideResponse(slide, attendee)));

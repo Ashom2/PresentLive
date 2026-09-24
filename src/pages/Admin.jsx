@@ -5,21 +5,19 @@
  * 
  * link to info/data pages for each:
  *    presentation
- *    attendee
+ *    attendee (done)
  *    slide
  *    poll response
  * 
  * SlideNavBar component
+ * During editing: should have a section for "sharing" which informs you whether people can join at the current state or not, along with the code
  * 
  * get rid of currentSlide?.type === 'Poll' in deckview 
  * make results page real, and navigable by presentation owner
  * 
  * PresentMD display (currently its just raw text)
  * Ask to confirm when attendees go to next slide before answering poll
- * 
- * 
- * what happens when you go to the view URL but didn't join?
- * 
+ *  
  * proper session handling with tokens
  *    users should only have access to presentations they created
  * have some way of handling updated presentations other than deleting all attendees and responses

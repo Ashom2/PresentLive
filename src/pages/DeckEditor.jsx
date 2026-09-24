@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { deleteSlide, deletePresentation } from '../api/client';
+import { deleteSlide, deletePresentation, reorderSlides } from '../api/client';
 import { useDeck } from '../hooks/useDeck';
 import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
@@ -31,6 +31,15 @@ export default function DeckEditor() {
       setCurrentSlideIndex((i) => Math.max(0, i - 1));
     } catch (err) {
       console.error('Delete slide failed:', err);
+    }
+  }
+
+  async function handleReorder(newSlides) {
+    try {
+      await reorderSlides(newSlides, presentationId);
+      await refetch();
+    } catch (err) {
+      console.error('Could not reorder slides:', err);
     }
   }
 
@@ -74,6 +83,7 @@ export default function DeckEditor() {
               if (confirmNavigation()) setCurrentSlideIndex(i);
             }}
             onDelete={handleDeleteSlide}
+            onReorder={handleReorder}
             presentationId={presentationId}
             onAdded={handleAdded}
           />

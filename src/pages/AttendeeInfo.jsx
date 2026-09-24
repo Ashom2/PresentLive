@@ -2,6 +2,7 @@ import { useParams, Link } from 'react-router-dom'
 import { useApi } from '../hooks/useApi';
 import { getAttendeeAndPresentation } from '../api/client';
 import { DataTable } from '../components/DataTable';
+import SectionCard from '../components/SectionCard';
 
 export default function AttendeeInfo() {
   const { attendeeId } = useParams();
@@ -55,16 +56,19 @@ export default function AttendeeInfo() {
         )}
       </div>
 
-      <div className="fw-semibold mb-2">Poll responses</div>
-      {responseRows.length === 0 ? (
-        <div className="text-muted small">No responses recorded.</div>
-      ) : (
-        <DataTable
-          columns={responseColumns}
-          rows={responseRows}
-          rowKey={(row) => row.id}
-        />
-      )}
+      <SectionCard
+        title={"Poll responses"}
+      >
+        {responseRows.length === 0 ? (
+          <div className="text-muted small">No responses recorded.</div>
+        ) : (
+          <DataTable
+            columns={responseColumns}
+            rows={responseRows}
+            rowKey={(row) => row.id}
+          />
+        )}
+      </SectionCard>
     </div>
   );
 }
