@@ -185,6 +185,7 @@ function DeckView({ attendee, mode }) {
       ) : (
         <>
           <SlideDisplay
+            title={currentSlide.title}
             markdown={currentSlide.body}
             index={index}
             total={slides.length}

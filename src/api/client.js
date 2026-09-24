@@ -205,7 +205,7 @@ export async function createSlide(presentationId, position) {
   // Create the slide entity
   const body = {
     title: 'New slide',
-    body: '## New slide\nBody text here.',
+    body: '### Heading\nBody text here.',
     type: 'Content',
     position: position,
     poll: { 

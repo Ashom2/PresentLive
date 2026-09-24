@@ -3,6 +3,7 @@
  *
  * @component
  * @param {Object} props
+ * @param {string} props.markdown - The title of the slide.
  * @param {string} props.markdown - The presentMD source for the slide.
  * @param {number} props.index - Zero-based index of the current slide.
  * @param {number} props.total - Total number of slides.
@@ -11,12 +12,11 @@
  * @param {Function} [props.onFinish] - Called when the last slide's Finish button is clicked.
  * @returns {JSX.Element} The slide preview container with navigation.
  */
-export default function SlideDisplay({ markdown, index, total, onPrev, onNext, onFinish }) {
+export default function SlideDisplay({ title, markdown, index, total, onPrev, onNext, onFinish }) {
   const isLast = index === total - 1;
   const showFinish = isLast && typeof onFinish === 'function';
   const showPrev = typeof onPrev === 'function';
   const showNext = typeof onNext === 'function' && !showFinish;
-
 
   return (
     <div className="simple-border bg-light p-0 mb-2" style={{ height: "500px" }}>
@@ -52,7 +52,11 @@ export default function SlideDisplay({ markdown, index, total, onPrev, onNext, o
         ) : (
           <span style={{ width: '6rem' }} />
         )}
-      </div>        
+      </div>
+
+      <div className="p-3 fw-bold text-center">
+        {title}
+      </div>      
 
       <div className="p-3">
         {markdown.split('\n').map((line, i) => (

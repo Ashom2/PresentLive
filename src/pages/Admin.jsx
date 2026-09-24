@@ -1,8 +1,9 @@
 /**
  * TODO list:
- * display slide title somewhere to audience
+ * upload content from md file
  * 
- * 
+ * edit permission?
+ * better colour scheme https://design-system.uq.edu.au/storybook-html/index.html?path=/story/introduction-overview--overview
  * link to info/data pages for each:
  *    presentation
  *    attendee (done)
