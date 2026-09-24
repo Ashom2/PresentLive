@@ -86,7 +86,7 @@ export default function PollDisplay({ slide, onSubmit, disabled = false }) {
           {submitting ? 'Submitting...' : 'Submit answer'}
         </button>
         {submitted && (
-          <span className="small text-success">Submitted — cannot be changed</span>
+          <span className="small text-success">Submitted - cannot be changed</span>
         )}
       </div>
 

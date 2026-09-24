@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { submitPollResponse, updateAttendee } from '../api/client';
 import { useDeck } from '../hooks/useDeck';
 import PollDisplay from '../components/PollDisplay';
@@ -21,12 +21,15 @@ import { Navigate } from 'react-router-dom';
  * @returns {JSX.Element} The audience page.
  */
 export function DeckAudience() {
-  const { attendee, loading, error, shouldRedirect, redirectTo, redirectState } = useAttendee();
+  const location = useLocation();
+  const { presentationId } = useParams();
+  // Get the attendee's ID from router state (placeholder)
+  const attendeeId = location.state?.attendeeId;
 
+  const { attendee, loading, error } = useAttendee(attendeeId);
   if (loading) return <p>Loading...</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
-  if (shouldRedirect) return <Navigate to={redirectTo} replace state={redirectState} />;
-  if (!attendee) return null;
+  if (!attendee) return <Navigate to={"/join"} replace state={{ code: presentationId }} />;
 
   return <DeckView attendee={attendee} mode="Audience" />;
 }
@@ -41,12 +44,15 @@ export function DeckAudience() {
  * @returns {JSX.Element} The review page.
  */
 export function DeckReview() {
-  const { attendee, loading, error, shouldRedirect, redirectTo, redirectState } = useAttendee();
+  const location = useLocation();
+  const { presentationId } = useParams();
+  // Get the attendee's ID from router state (placeholder)
+  const attendeeId = location.state?.attendeeId;
 
+  const { attendee, loading, error } = useAttendee(attendeeId);
   if (loading) return <p>Loading...</p>;
   if (error) return <div className="alert alert-danger">{error}</div>;
-  if (shouldRedirect) return <Navigate to={redirectTo} replace state={redirectState} />;
-  if (!attendee) return null;
+  if (!attendee) return <Navigate to={"/join"} replace state={{ code: presentationId }} />;
 
   return <DeckView attendee={attendee} mode="Review" />;
 }

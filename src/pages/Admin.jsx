@@ -1,6 +1,8 @@
 /**
  * TODO list:
- * page for previewing/reviewing presentation (can go forward and backward) without submitting poll responses
+ * display slide title somewhere to audience
+ * 
+ * 
  * link to info/data pages for each:
  *    presentation
  *    attendee
@@ -12,9 +14,14 @@
  * get rid of currentSlide?.type === 'Poll' in deckview 
  * make results page real, and navigable by presentation owner
  * 
+ * PresentMD display (currently its just raw text)
+ * Ask to confirm when attendees go to next slide before answering poll
  * 
  * 
  * what happens when you go to the view URL but didn't join?
+ * 
+ * proper session handling with tokens
+ *    users should only have access to presentations they created
  */
 
 import { useState } from 'react';
