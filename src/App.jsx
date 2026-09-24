@@ -24,6 +24,7 @@ import Admin from './pages/Admin';
  */
 export default function App() {
   const navLinks = [
+    { path: '/', text: 'Home' },
     { path: '/decks', text: 'My presentations' },
     { path: '/join', text: 'Join' },
   ]
