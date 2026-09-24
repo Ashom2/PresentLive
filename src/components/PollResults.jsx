@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import SectionCard from './SectionCard';
 import { useApi } from '../hooks/useApi';
 import { getPollResults } from '../api/client';
@@ -23,6 +23,8 @@ export default function PollResults({
   intervalMs,
   showAttendees = false,
 }) {
+  const [expanded, setExpanded] = useState(false);
+
   const { data: results, loading, error, refetch } = useApi(
     () => getPollResults(slideId),
     [slideId]
@@ -56,6 +58,7 @@ export default function PollResults({
   ];
 
   const responseRows = responses.map((r) => ({
+    id: r.attendeeId,
     name: r.attendeeName,
     answer: options[r.optionIndex] ?? '-',
   }));
@@ -94,7 +97,7 @@ export default function PollResults({
         </div>
       ) : (<></>)}
 
-      {showAttendees && responses.length > 0 && (
+      {/* {showAttendees && responses.length > 0 && (
         <div className="border-top pt-2 mt-2 d-flex flex-column gap-1">
           <div className="fw-bold">Results by attendee</div>
           <DataTable
@@ -102,6 +105,40 @@ export default function PollResults({
             rows={responseRows}
             rowKey={(row) => row.id}
           />
+        </div>
+      )} */}
+
+      {showAttendees && responses.length > 0 && (
+        <div className="border-top pt-2 mt-2">
+          <button
+            type="button"
+            className="btn btn-link p-0 fw-bold text-decoration-none"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            aria-controls="poll-responses"
+          >
+            <span
+              className="me-1"
+              style={{
+                display: 'inline-block',
+                transition: 'transform 0.15s ease',
+                transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)',
+              }}
+            >
+              ▶
+            </span>
+            Results by attendee ({responses.length})
+          </button>
+
+          {expanded && (
+            <div id="poll-responses" className="mt-2">
+              <DataTable
+                columns={responseColumns}
+                rows={responseRows}
+                rowKey={(row) => row.id}
+              />
+            </div>
+          )}
         </div>
       )}
     </SectionCard>
