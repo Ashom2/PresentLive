@@ -28,6 +28,7 @@ export default function SlideList({ slides, currentIndex, onSelect, onDelete, pr
           >
             <span>{i + 1}. {slide.title}</span>
             <DeleteButton 
+              confirmMessage={`Delete "${slide.title}"? This can't be undone.`}
               onDelete={() => onDelete(slide)}
               tooltip="Delete slide"
             />

@@ -142,7 +142,7 @@ function DeckView({ attendee, mode }) {
 
   async function handlePollSubmit(optionIndex) {
     if (!isAudience) return;
-    await submitPollResponse(currentSlide.id, attendeeId, optionIndex);
+    await submitPollResponse(currentSlide, attendeeId, optionIndex);
   }
 
   /**

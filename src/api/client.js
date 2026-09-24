@@ -79,7 +79,7 @@ export const createPresentation = (title, author="Unknown") => {
     author: author,
     status: 'Draft',
     slides: [],
-    attendees: [],
+    attendee_ids: [],
   };
   return requestEntity('/presentation', { method: 'POST', body: body });
 };
@@ -119,7 +119,7 @@ export const updatePresentationStatus = (id, status) =>
 export async function getPresentationAttendees(presentationId) {
   const presentation = await getPresentation(presentationId);
   return await Promise.all(
-    presentation.attendees.map((attendeeId) => getAttendee(attendeeId))
+    presentation.attendee_ids.map((attendeeId) => getAttendee(attendeeId))
   );
 }
 /**
@@ -174,7 +174,11 @@ export async function createSlide(presentationId, position) {
     body: '## New slide\nBody text here.',
     type: 'Content',
     position: position,
-    poll: { question: '', options: [], responses: [] },
+    poll: { 
+      question: '', 
+      options: [],
+    },
+    response_ids: [],
   };
   const slide = await requestEntity('/slide', { method: 'POST', body: body });
 
@@ -191,10 +195,15 @@ export async function createSlide(presentationId, position) {
  * @param {string} slideId - Id of the slide's poll to delete
  * @returns {Promise<void>}
  */
+//TODO i moved slide's responses OUT of poll
+//TODO clone poll in poll_response entries when created
+//TODO rename deleteALL
+//TODO deletePollResponse is a dud (it doesn't propogate and there will still be references everywhere)
+  //make deletePollResponse(slideId, attendee, ect) search and destroy itself
 export async function deleteSlidePollResponses(slideId) {
   const slide = await getSlide(slideId);
-  const responseIds = Array.isArray(slide?.poll?.responses) ? slide.poll.responses : [];
-  await Promise.all(responseIds.map((rid) => deletePollResponse(rid)));
+  const responseIds = Array.isArray(slide?.response_ids) ? slide?.response_ids : [];
+  await Promise.all(responseIds.map((responseId) => deletePollResponse(responseId)));
 }
 /**
  * Replaces a slide's poll question and options, deleting any existing responses.
@@ -212,8 +221,8 @@ export async function updateSlidePoll(slideId, question, options) {
     poll: {
       question: question,
       options: options,
-      responses: [],
-    }
+    },
+    response_ids: []
   });
 }
 /**
@@ -280,7 +289,7 @@ export const updateAttendeeSlideIndex = (attendeeId, slideIndex) =>
  * Creates an attendee and appends their id to the presentation's attendees array.
  *
  * @param {string} name
- * @param {Object} presentation - The presentation to join (needs .id and .attendees).
+ * @param {Object} presentation - The presentation to join (needs .id and .attendee_ids).
  * @returns {Promise<Object>} The created attendee.
  */
 export async function createAttendee(name, presentation) { 
@@ -289,12 +298,14 @@ export async function createAttendee(name, presentation) {
     name: name,
     status: "Viewing",
     slide_index: 0,
+    presentation_id: presentation.id,
+    response_ids: [],
   }
   const attendee = await requestEntity('/attendee', { method: 'POST', body: body });
 
   // Append the attendee's id to the presentation's attendees array
-  const existingIds = Array.isArray(presentation.attendees) ? presentation.attendees : [];
-  await updatePresentation(presentation.id, { attendees: [...existingIds, attendee.id] });
+  const existingIds = Array.isArray(presentation.attendee_ids) ? presentation.attendee_ids : [];
+  await updatePresentation(presentation.id, { attendee_ids: [...existingIds, attendee.id] });
 
   return attendee;
 }
@@ -333,27 +344,31 @@ export const updatePollResponse = (id, data) => request(`/poll_response/${id}`, 
 /**
  * Records an attendee's answer and appends the response id to the slide's poll.
  *
- * @param {string} slideId
+ * @param {Object} slide
  * @param {string} attendeeId
  * @param {number} optionIndex
  * @returns {Promise<Object>} The created poll response.
  */
-export async function submitPollResponse(slideId, attendeeId, optionIndex) {
+export async function submitPollResponse(slide, attendeeId, optionIndex) {
   // Create the poll_response entity
   const response = await requestEntity('/poll_response', { method: 'POST', body: {
     attendee_id: attendeeId,
     option_index: optionIndex,
+    slide_id: slide.id,
+    poll: slide.poll,
   }});
 
-  // Append the poll_response's id to the slides's responses array within the poll JSON field
-  const slide = await getSlide(slideId);
-  const existingPoll = slide.poll;
-  const existingIds = Array.isArray(existingPoll.responses) ? existingPoll.responses : [];
-  await updateSlide(slideId, {
-    poll: {
-      ...existingPoll,
-      responses: [...existingIds, response.id] 
-    }
+  // Append the poll_response's id to the slides's responses array
+  const slideResponseIds = Array.isArray(slide.response_ids) ? slide.response_ids : [];
+  await updateSlide(slide.id, {
+    response_ids: [...slideResponseIds, response.id] 
+  });
+
+  // Append the poll_response's id to the attendees's responses array
+  const attendee = await getAttendee(attendeeId);
+  const attendeeResponseIds = Array.isArray(attendee.response_ids) ? attendee.response_ids : [];
+  await updateAttendee(attendeeId, {
+    response_ids: [...attendeeResponseIds, response.id] 
   });
 
   return response;
@@ -368,7 +383,7 @@ export async function getPollResults(slideId) {
   const slide = await getSlide(slideId);
 
   const options = Array.isArray(slide?.poll?.options) ? slide.poll.options : [];
-  const responseIds = Array.isArray(slide?.poll?.responses) ? slide.poll.responses : [];
+  const responseIds = Array.isArray(slide?.response_ids) ? slide?.response_ids : [];
 
   // Build the response list with names
   const responses = await Promise.all(
@@ -417,4 +432,36 @@ export async function getPresentationAndSlides(id) {
   const slideIds = Array.isArray(presentation.slides) ? presentation.slides : [];
   const slides = await Promise.all(slideIds.map((slideId) => getSlide(slideId)));
   return { presentation, slides };
+}
+
+
+
+/**
+ * Searches a slide for a response that belongs to an attendee.
+ * 
+ * @param {Object} slide - The poll slide.
+ * @param {Object} attendee - The attendee to look for.
+ * @returns {Promise<Object|undefined>} The attendee's response, if any.
+ */
+export async function getSlideResponse(slide, attendee) {
+  const responseIds = Array.isArray(slide?.response_ids) ? slide?.response_ids : [];
+  
+  if (!attendee?.id || responseIds.length === 0) return undefined;
+  
+  const all = await Promise.all(responseIds.map((responseId) => getPollResponse(responseId)));
+  const todo = all.find((response) => response?.attendee_id === attendee.id);
+  return todo;
+}
+
+export async function getAttendeeAndPresentation(attendeeId) {
+  const attendee = await getAttendee(attendeeId);
+  const presentation = await getPresentation(attendee.presentation_id);
+
+  const slideIds = Array.isArray(presentation.slides) ? presentation.slides : [];
+  const slides = await Promise.all(slideIds.map((slideId) => getSlide(slideId)));
+
+  const allResponses = await Promise.all(slides.map((slide) => getSlideResponse(slide, attendee)));
+  const responses = allResponses.filter(Boolean);
+
+  return { attendee, presentation, responses }
 }

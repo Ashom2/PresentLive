@@ -25,12 +25,8 @@ export default function DeckEditor() {
   }
 
   async function handleDeleteSlide(slide) {
-    if (!window.confirm(`Delete "${slide.title}"? This can't be undone.`)) {
-      return;
-    }
-
     try {
-      await deleteSlide(slide.id, id);
+      await deleteSlide(slide.id, presentationId);
       await refetch();
       setCurrentSlideIndex((i) => Math.max(0, i - 1));
     } catch (err) {
