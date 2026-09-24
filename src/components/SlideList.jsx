@@ -85,7 +85,7 @@ export default function SlideList({
       </DndContext>
       
       <div className="text-center text-muted small">
-        drag and drop to re-order slides
+        Drag and drop to re-order slides.
       </div>
 
       <AddSlideButton

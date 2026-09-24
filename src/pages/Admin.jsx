@@ -11,7 +11,6 @@
  *    poll response
  * 
  * SlideNavBar component
- * During editing: should have a section for "sharing" which informs you whether people can join at the current state or not, along with the code
  * 
  * get rid of currentSlide?.type === 'Poll' in deckview 
  * make results page real, and navigable by presentation owner

@@ -4,6 +4,7 @@ import { deleteSlide, deletePresentation, reorderSlides } from '../api/client';
 import { useDeck } from '../hooks/useDeck';
 import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
+import PresentationSharing from '../components/PresentationSharing';
 import SlideEditor from '../components/SlideEditor'
 import { DeleteButton, BackButton, PresentButton } from '../components/Buttons';
 
@@ -61,7 +62,10 @@ export default function DeckEditor() {
           My presentations
         </BackButton>
         <div className="d-flex gap-1">
-          <PresentButton presentationId={presentation.id} onClick={() => confirmNavigation()} />
+          <PresentButton 
+            presentationId={presentation.id} 
+            onClick={() => confirmNavigation()} 
+          />
           <DeleteButton
             confirmMessage={`Delete "${presentation.title}"? This cannot be undone.`}
             onDelete={() => deletePresentation(presentation.id)}
@@ -74,7 +78,14 @@ export default function DeckEditor() {
       </div>
       <div className="row g-3">
         <div className="col-md-4">
-          <PresentationMeta presentation={presentation} onChanged={refetch} />
+          <PresentationMeta 
+            presentation={presentation} 
+            onChanged={refetch} 
+          />
+          <PresentationSharing 
+            presentation={presentation} 
+            onChanged={refetch} 
+          />
           <SlideList
             slides={slides}
             currentIndex={currentSlideIndex}

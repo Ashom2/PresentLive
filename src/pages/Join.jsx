@@ -58,7 +58,6 @@ export default function Join() {
         attendeeSlideIndex: attendee.slide_index 
       }});
     } catch (err) {
-      // getPresentation throws on 404, network failure, etc.
       setError('No presentation found for that code.');
     } finally {
       setChecking(false);
@@ -72,7 +71,7 @@ export default function Join() {
         <label className="form-label fw-semibold">Presentation link or code</label>
         <input
           className="form-control"
-          placeholder="e.g. intro-comp2140"
+          placeholder="e.g. 767f0645-20e3-4322-9402-d7a2b1d9e4be"
           value={code}
           onChange={(e) => setCode(e.target.value)}
         />

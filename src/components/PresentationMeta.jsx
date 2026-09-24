@@ -62,7 +62,7 @@ export default function PresentationMeta({ presentation, onChanged }) {
 
   return (
     <SectionCard title="Presentation Meta" className="mb-2">
-      <div className="d-flex align-items-center">
+      <div className="d-flex align-items-center gap-2">
         <label className="fw-semibold" style={{ minWidth: '4rem' }}>Title</label>
         <input
           className="form-control form-control-sm"
@@ -74,7 +74,7 @@ export default function PresentationMeta({ presentation, onChanged }) {
         />
       </div>
 
-      <div className="d-flex align-items-center">
+      <div className="d-flex align-items-center gap-2">
         <label className="fw-semibold" style={{ minWidth: '4rem' }}>Author</label>
         <input
           className="form-control form-control-sm"
@@ -85,36 +85,6 @@ export default function PresentationMeta({ presentation, onChanged }) {
           disabled={savingAuthor}
         />
       </div>
-
-      <div className="d-flex align-items-center">
-        <label className="fw-semibold" style={{ minWidth: '4rem' }}>Status</label>
-        <StatusDropdown
-          presentationId={presentation.id}
-          status={presentation.status}
-          onChanged={onChanged}
-        />
-      </div>
-
-      {presentation.status === 'Published' && (
-        <div className="d-flex align-items-center">
-          <label className="fw-semibold" style={{ minWidth: '4rem' }}>Code</label>
-          <div className="input-group input-group-sm">
-            <input
-              className="form-control form-control-sm font-monospace"
-              value={presentation.id}
-              readOnly
-              onFocus={(e) => e.target.select()}
-            />
-            <button
-              className="btn btn-outline-secondary"
-              onClick={handleCopy}
-              title="Copy ID to clipboard"
-            >
-              {copied ? 'Copied!' : 'Copy'}
-            </button>
-          </div>
-        </div>
-      )}
     </SectionCard>
   );
 }

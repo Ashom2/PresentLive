@@ -32,6 +32,9 @@ export default function AttendeeInfo() {
   return (
     <div className="page-box">
       <div className="page-title text-center h4">
+        {attendee.name}
+      </div>
+      <div className="text-center text-muted">
         Attendee info
       </div>
 
