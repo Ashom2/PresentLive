@@ -2,6 +2,7 @@
  * TODO list:
  * upload content from md file
  * 
+ * getPollResults() runs super slow. Would be better to pass in data from the page.
  * edit permission?
  * better colour scheme https://design-system.uq.edu.au/storybook-html/index.html?path=/story/introduction-overview--overview
  * link to info/data pages for each:
