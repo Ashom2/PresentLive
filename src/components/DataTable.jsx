@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { Link } from 'react-router-dom';
 import { useApi } from '../hooks/useApi';
 
@@ -70,18 +72,25 @@ export function FetchedDataTable({
   title,
   fetcher,
   deps = [],
+  intervalMs,
   columns,
   rowKey,
   emptyMessage,
 }) {
-  const { data, loading, error } = useApi(fetcher, deps);
+  const { data, loading, error, refetch } = useApi(fetcher, deps);
 
-  if (loading) {
+  useEffect(() => {
+    if (!intervalMs) return;
+    const id = setInterval(refetch, intervalMs);
+    return () => clearInterval(id);
+  }, [intervalMs]);
+
+  if (loading && !data) {
     return <div title={title} className="mb-2">
       Loading...
     </div>;
   }
-  if (error) {
+  if (error && !data) {
     return (
       <div title={title} className="mb-2">
         <span className="text-danger small">{error}</span>

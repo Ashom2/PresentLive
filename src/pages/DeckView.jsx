@@ -215,7 +215,10 @@ function DeckView({ attendee, mode }) {
       )}
 
       {isPresenter && (
-        <AttendanceDisplay presentationId={presentation.id} />
+        <AttendanceDisplay 
+          presentationId={presentation.id}
+          intervalMs={3000}
+        />
       )}
     </div>
   );
