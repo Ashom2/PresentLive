@@ -22,6 +22,7 @@
  * 
  * proper session handling with tokens
  *    users should only have access to presentations they created
+ * have some way of handling updated presentations other than deleting all attendees and responses
  */
 
 import { useState } from 'react';

@@ -32,15 +32,34 @@ async function request(path, { method = 'GET', body } = {}) {
   return payload;
 }
 
+/**
+ * Like `request`, but unwraps `{ data }` envelopes. Returns the entity
+ * directly, so callers never see the envelope.
+ *
+ * @param {string} path
+ * @param {Object} [options]
+ * @returns {Promise<any>}
+ */
 async function requestEntity(path, options) {
   const payload = await request(path, options);
   return payload?.data ?? payload;
 }
 
+/**
+ * Like `request`, but unwraps `{ data }` envelopes and asserts the result
+ * is an array. Returns [] if the payload isn't an array.
+ *
+ * @param {string} path
+ * @param {Object} [options]
+ * @returns {Promise<Array>}
+ */
 async function requestList(path, options) {
   const payload = await request(path, options);
   return Array.isArray(payload?.data) ? payload.data : [];
 }
+
+
+//TODO delete attendee
 
 
 
@@ -55,7 +74,7 @@ export const getPresentation = (id) => requestEntity(`/presentation/${id}`);
 /**
  * Fetches every presentation.
  *
- * @returns {Promise<Object>} The presentations.
+ * @returns {Promise<Array<Object>>} The presentations.
  */
 export const getAllPresentations = () => requestList("/presentation");
 /**
@@ -94,7 +113,7 @@ export const updatePresentationTitle = (id, title) =>
   updatePresentation(id, { title: title });
 /**
  * Updates a presentation's author.
- *poll belonging to a slide, along wit
+ *
  * @param {string} id - Presentation id.
  * @param {string} author - The new author.
  * @returns {Promise<Object>} The updated presentation.
@@ -123,15 +142,27 @@ export async function getPresentationAttendees(presentationId) {
   );
 }
 /**
- * Deletes a presentation and all of its slides.
+ * Deletes a presentation, its slides, their poll responses, and attendees.
+ *
+ * Note: does not delete attendees - they remain in the database with
+ * a dangling presentation_id.
  *
  * @param {string} id - Presentation id.
  * @returns {Promise<void>}
  */
 export async function deletePresentation(id) {
   const presentation = await getPresentation(id);
+
   // Delete all slides and their poll responses
-  await Promise.all(presentation.slides.map((slideId) => deleteSlideHelper(slideId)));
+  await Promise.all(presentation.slides.map(async (slideId) =>
+    deleteSlide(slideId, id, false)
+  ));
+
+  // Delete all attendees
+  await Promise.all(presentation.attendee_ids.map(async (attendeeId) =>
+    deleteAttendee(attendeeId)
+  ));
+
   // Delete the presentation
   await request(`/presentation/${id}`, { method: 'DELETE' });
 }
@@ -149,7 +180,7 @@ export const getSlide = (id) => requestEntity(`/slide/${id}`);
 /**
  * Fetches every slide.
  *
- * @returns {Promise<Object>} The slides.
+ * @returns {Promise<Array<Object>>} The slides.
  */
 export const getAllSlides = () => requestList("/slide");
 /**
@@ -190,20 +221,19 @@ export async function createSlide(presentationId, position) {
   return slide;
 }
 /**
- * Deletes all responses belonging to a poll.
- * 
- * @param {string} slideId - Id of the slide's poll to delete
+ * Deletes every response attached to a slide's poll.
+ *
+ * @param {string} slideId - Id of the slide whose responses should be deleted.
+ * @param {boolean} [removeSlideRefs=true] - If false, skip removing ids from
+ *   the slide's own response_ids (used when the slide is being deleted anyway).
  * @returns {Promise<void>}
  */
-//TODO i moved slide's responses OUT of poll
-//TODO clone poll in poll_response entries when created
-//TODO rename deleteALL
-//TODO deletePollResponse is a dud (it doesn't propogate and there will still be references everywhere)
-  //make deletePollResponse(slideId, attendee, ect) search and destroy itself
-export async function deleteSlidePollResponses(slideId) {
+export async function deleteSlidePollResponses(slideId, removeSlideRefs=true) {
   const slide = await getSlide(slideId);
   const responseIds = Array.isArray(slide?.response_ids) ? slide?.response_ids : [];
-  await Promise.all(responseIds.map((responseId) => deletePollResponse(responseId)));
+  await Promise.all(responseIds.map((responseId) => 
+    deletePollResponseAndReferences(responseId, removeSlideRefs)
+  ));
 }
 /**
  * Replaces a slide's poll question and options, deleting any existing responses.
@@ -214,8 +244,9 @@ export async function deleteSlidePollResponses(slideId) {
  * @returns {Promise<void>}
  */
 export async function updateSlidePoll(slideId, question, options) {
-  // Delete existing invalidated responses
-  await deleteSlidePollResponses(slideId);
+  // Delete existing invalidated responses (and references other than those in this slide)
+  await deleteSlidePollResponses(slideId, false);
+
   // Update the poll
   await updateSlide(slideId, {
     poll: {
@@ -226,35 +257,36 @@ export async function updateSlidePoll(slideId, question, options) {
   });
 }
 /**
- * Deletes a slide and it's responses without removing it's references in the presentation.
- * 
- * @param {string} slideId 
- * @returns {Promise<void>}
- */
-async function deleteSlideHelper(slideId) {
-  await deleteSlidePollResponses(slideId);
-  await request(`/slide/${slideId}`, { method: 'DELETE' });
-}
-/**
  * Deletes a slide, its poll responses, and removes its id from the
  * presentation's slides array.
  *
  * @param {string} slideId - Id of the slide to delete.
  * @param {string} presentationId - Id of the owning presentation.
+ * @param {boolean} [removePresentationRefs=true] - If false, skip removing
+ *   the slide id from the presentation (used when the presentation itself
+ *   is being deleted).
  * @returns {Promise<void>}
  */
-export async function deleteSlide(slideId, presentationId) {
-  // Remove any poll responses the slide owns, and delete the slide
-  await deleteSlideHelper(slideId);
+export async function deleteSlide(slideId, presentationId, removePresentationRefs=true) {
+  // Remove any poll responses and their references the slide owns, and delete the slide
+  await deleteSlidePollResponses(slideId, false);
+  await request(`/slide/${slideId}`, { method: 'DELETE' });
 
   // Remove references to the slide's id in the presentation
-  const presentation = await getPresentation(presentationId);
-  const remaining = (Array.isArray(presentation.slides) ? presentation.slides : []).filter(
-    (id) => id !== slideId
-  );
-  await updatePresentation(presentationId, { slides: remaining });
+  if (removePresentationRefs) {
+    const presentation = await getPresentation(presentationId);
+    const remaining = (Array.isArray(presentation.slides) ? presentation.slides : []).filter(
+      (id) => id !== slideId
+    );
+    await updatePresentation(presentationId, { slides: remaining });
+  }
 }
-
+/**
+ * Returns true if a slide is a poll slide.
+ *
+ * @param {Object} slide
+ * @returns {boolean}
+ */
 export function isPoll(slide) {
   return slide.type === "Poll";
 }
@@ -271,7 +303,7 @@ export const getAttendee = (id) => requestEntity(`/attendee/${id}`);
 /**
  * Fetches every attendee.
  *
- * @returns {Promise<Object>} The attendees.
+ * @returns {Promise<Array<Object>>} The attendees.
  */
 export const getAllAttendees = () => requestList("/attendee");
 /**
@@ -282,7 +314,13 @@ export const getAllAttendees = () => requestList("/attendee");
  * @returns {Promise<Object>} The updated attendee.
  */
 export const updateAttendee = (id, data) => request(`/attendee/${id}`, { method: 'PATCH', body: data });
-
+/**
+ * Updates an attendee's slide_index.
+ *
+ * @param {string} attendeeId
+ * @param {number} slideIndex
+ * @returns {Promise<Object>} The updated attendee.
+ */
 export const updateAttendeeSlideIndex = (attendeeId, slideIndex) =>
   updateAttendee(attendeeId, { slide_index: slideIndex });
 /**
@@ -312,6 +350,10 @@ export async function createAttendee(name, presentation) {
 /**
  * Deletes an attendee.
  *
+ * Note: does not remove the attendee's id from the presentation's
+ * attendee_ids, nor delete their poll responses. Callers are responsible
+ * for cleaning those up.
+ *
  * @param {string} id - Attendee id.
  * @returns {Promise<void>}
  */
@@ -330,7 +372,7 @@ export const getPollResponse = (id) => requestEntity(`/poll_response/${id}`);
 /**
  * Fetches every poll response.
  *
- * @returns {Promise<Object>} The responses.
+ * @returns {Promise<Array<Object>>} The responses.
  */
 export const getAllPollResponses = () => requestList("/poll_response");
 /**
@@ -342,9 +384,10 @@ export const getAllPollResponses = () => requestList("/poll_response");
  */
 export const updatePollResponse = (id, data) => request(`/poll_response/${id}`, { method: 'PATCH', body: data });
 /**
- * Records an attendee's answer and appends the response id to the slide's poll.
+ * Records an attendee's answer to a poll and appends the new response id
+ * to both the slide's and the attendee's response_ids arrays.
  *
- * @param {Object} slide
+ * @param {Object} slide - The poll slide. Must include id, poll, and response_ids.
  * @param {string} attendeeId
  * @param {number} optionIndex
  * @returns {Promise<Object>} The created poll response.
@@ -417,15 +460,53 @@ export async function getPollResults(slideId) {
  * @returns {Promise<void>}
  */
 export const deletePollResponse = (id) => request(`/poll_response/${id}`, { method: 'DELETE' });
+/**
+ * Deletes a poll response and removes its id from the owning slide
+ * and attendee's response_ids arrays.
+ *
+ * @param {string} responseId - Id of the response to delete.
+ * @param {boolean} [removeSlideRefs=true] - If false, skip removing the id
+ *   from the slide's response_ids.
+ * @param {boolean} [removeAttendeeRefs=true] - If false, skip removing the id
+ *   from the attendee's response_ids.
+ * @returns {Promise<void>}
+ */
+export async function deletePollResponseAndReferences(responseId, removeSlideRefs=true, removeAttendeeRefs=true) {
+  const response  = await getPollResponse(responseId);
+  const slideId = response.slide_id;
+  const attendeeId = response.attendee_id;
+
+  // Remove from the slide's response_ids.
+  if (removeSlideRefs) {
+    const slide = await getSlide(slideId);
+    const slideRemainingIds = (Array.isArray(slide.response_ids) ? slide.response_ids : [])
+      .filter((rid) => rid !== responseId);
+    await updateSlide(slideId, { response_ids: slideRemainingIds });
+  }
+
+  // Remove from the attendee's response_ids.
+  if (removeAttendeeRefs) {
+    const attendee = await getAttendee(attendeeId);
+    const attendeeRemainingIds = (Array.isArray(attendee.response_ids) ? attendee.response_ids : [])
+      .filter((rid) => rid !== responseId);
+    await updateAttendee(attendeeId, { response_ids: attendeeRemainingIds });
+  }
+
+  // Delete the response itself.
+  await deletePollResponse(responseId);
+}
+
+
+
 
 
 
 // Other functions --------------------------------------------------------
 /**
- * Fetches a presentation with its slides populated.
+ * Fetches a presentation and its slides as separate values.
  *
- * @param {string} id
- * @returns {Promise<Object>} The presentation with `slides: Array<Object>`.
+ * @param {string} id - Presentation id.
+ * @returns {Promise<{ presentation: Object, slides: Array<Object> }>}
  */
 export async function getPresentationAndSlides(id) {
   const presentation = await getPresentation(id);
@@ -433,8 +514,6 @@ export async function getPresentationAndSlides(id) {
   const slides = await Promise.all(slideIds.map((slideId) => getSlide(slideId)));
   return { presentation, slides };
 }
-
-
 
 /**
  * Searches a slide for a response that belongs to an attendee.
@@ -453,6 +532,13 @@ export async function getSlideResponse(slide, attendee) {
   return todo;
 }
 
+/**
+ * Fetches an attendee, their presentation, and every poll response
+ * they submitted across the presentation's slides.
+ *
+ * @param {string} attendeeId
+ * @returns {Promise<{ attendee: Object, presentation: Object, responses: Array<Object> }>}
+ */
 export async function getAttendeeAndPresentation(attendeeId) {
   const attendee = await getAttendee(attendeeId);
   const presentation = await getPresentation(attendee.presentation_id);
