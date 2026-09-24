@@ -198,3 +198,27 @@ const navigate = useNavigate();
     </button>
   );
 }
+
+export function PreviewButton({
+  presentationId,
+  onClick,
+  children = "Preview",
+}) {
+const navigate = useNavigate();
+  function handleClick() {
+    // If onClick returns false, treat it as an order to cancel navigation
+    if (onClick?.() === false) return;
+
+    if (presentationId) {
+      navigate(`/decks/preview/${presentationId}`);
+    } else {
+      navigate(-1);
+    }
+  }
+
+  return (
+    <button className="btn btn-outline-secondary" onClick={handleClick}>
+      {children}
+    </button>
+  );
+}

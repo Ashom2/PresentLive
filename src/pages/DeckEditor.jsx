@@ -6,7 +6,7 @@ import SlideList from '../components/SlideList';
 import PresentationMeta from '../components/PresentationMeta';
 import PresentationSharing from '../components/PresentationSharing';
 import SlideEditor from '../components/SlideEditor'
-import { DeleteButton, BackButton, PresentButton } from '../components/Buttons';
+import { DeleteButton, BackButton, PresentButton, PreviewButton } from '../components/Buttons';
 
 export default function DeckEditor() {
   const navigate = useNavigate();
@@ -62,6 +62,10 @@ export default function DeckEditor() {
           My presentations
         </BackButton>
         <div className="d-flex gap-1">
+          <PreviewButton
+            presentationId={presentation.id} 
+            onClick={() => confirmNavigation()}
+          />
           <PresentButton 
             presentationId={presentation.id} 
             onClick={() => confirmNavigation()} 
