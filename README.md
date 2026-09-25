@@ -1,6 +1,20 @@
 # PresentLive
 Made by Alexander Shomer using React, Bootstrap and JavaScript Web for COMP2140 at The University of Queensland.
 
+# Usage of Generative AI
+DeepSeek AI was used to assist in the creation of this web application.
+   - It was used to generate initial mockups of HTML pages using Bootstrap.
+   - It was used to assist my practical understanding of React.
+   - It was used to partially or fully generate some functions - all of which are cited in the JDoc - particularly:
+      - useApi (`src/hooks/useApi.js`)
+      - request (`scr/api/client.js`)
+      - SortableSlideRow and SlideList (`src/components/SlideList.jsx`)
+      - PollDisplay (`src/components/PollDisplay.jsx`)
+   - It was used to refine the AI prompt template in `src/api/server.js`.
+   - It was used to assist writing this README.md, particularly the outline of the testing guide. It was then corrected, reformatted, edited and checked manually.
+
+---
+
 # Testing Guide
 
 ## Setup
@@ -206,7 +220,7 @@ Beyond drag-and-drop reordering (Workflow 1.4), the following advanced features 
 |Clear navigation|Workflow 1.1.1, 1.7.1|
 |Colour, icons, instructions|status dropdown (1.5), poll toggle (1.3.6), presentation status badges, navigation arrows, button colours throughout|
 |Footer|All pages|
-| 3+ related entities|Deck, Slide, Attendee, Poll Response used for Workflow 2.5.2|
+| 3+ related entities|Deck, Slide, Attendee, Poll Response used for slide poll results section (2.5.2) and attendee info page (2.6.2)|
 |RESTful API|All actions persist to the API and all API stored entities are displayed in tables on `/admin` page|
 | List views for each entity          | Decks presentations (`/decks`), Slides (editor sidebar), Attendees (presentation panel), All (`/admin`)|
 |Add, Edit, Delete|Workflow 1.1 (add deck), 1.2 (edit), 1.3 (add/edit slides); delete buttons on each list row|
