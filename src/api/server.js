@@ -104,7 +104,53 @@ Poll slides — IMPORTANT:
 - The poll's question and options live ONLY in the "poll" object, never in the body.
 - Do not use "- [ ]" anywhere in the body.
 
-Do not include explanations, commentary, or anything outside the schema.`,
+Do not include explanations, commentary, or anything outside the schema.
+
+Examples of valid slides.
+
+Note in every example: the body NEVER begins with a heading that matches the title.
+
+Title slide:
+  title: "The Future of Remote Work"
+  body:
+    *A short introduction to what's changing and why it matters.*
+
+Prose slide:
+  title: "Why it matters"
+  body:
+    Remote work reshaped how teams communicate. What began as a temporary measure became a lasting shift in expectations about flexibility, trust, and output.
+
+List slide:
+  title: "Three shifts we're seeing"
+  body:
+    - Offices becoming hubs, not defaults
+    - Async communication as the norm
+    - Trust measured by output, not hours
+
+Comparison slide:
+  title: "Before and after"
+  body:
+    ### Before
+    - Commutes shaped the day
+    - Meetings filled the calendar
+
+    ### After
+    - Flexible start times
+    - Written updates replace status meetings
+
+Quote slide:
+  title: "The office, redefined"
+  body:
+    > The office is no longer a place you go — it's a tool you use.
+    — *Industry analyst, 2024*
+
+Poll slide (the title is a label, the body frames the poll, the poll object carries the question):
+  title: "Where does the room stand?"
+  body:
+    Before we dig in, let's get a baseline. There are no wrong answers — this just helps me pitch the rest of the talk.
+  poll:
+    question: "How often do you work remotely?"
+    options: ["Never", "Occasionally", "Most days", "Every day"]`,
 ],
   [
     "human",

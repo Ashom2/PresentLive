@@ -6,7 +6,7 @@ Made by Alexander Shomer using React, Bootstrap and JavaScript Web for COMP2140 
 ## Setup
 Before running these workflows, ensure the app is running.
 1. Execute `npm run dev` in the `/presentlive-app` directory.
-2. Ensure `.env` file contains `VITE_API_TOKEN=<token>`.
+2. Ensure `.env` file contains `VITE_API_TOKEN=<token>`, ``.
 3. Visit the local app at `http://localhost:5173`
 
 ## Workflow 1: Presenter
