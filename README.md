@@ -173,7 +173,7 @@ Before running these workflows, ensure the app is running.
 3. Publish the deck as per Workflow 1.5.
 4. Click **Present** and step through the slides as per Workflow 1.7. → *Demonstrates: the full presenter workflow works on AI-generated decks.*
 
-
+---
 
 # Advanced Features
 
@@ -196,7 +196,7 @@ Beyond drag-and-drop reordering (Workflow 1.4), the following advanced features 
 1. In the **Presentation Sharing** panel, click **Copy** next to any field (Code, Join link, or Edit link).
 2. Paste the clipboard contents somewhere - the copied value appears. → *Demonstrates: browser Clipboard API, unique link generation.*
 
-
+---
 
 # Summary of Requirements Coverage
 
