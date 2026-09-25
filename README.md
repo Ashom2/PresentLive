@@ -122,3 +122,37 @@ Before running these workflows, ensure the app is running.
 **Workflow 2 complete.** An audience member joined via a unique link, participated in a poll, finished, and their data flowed back to the presenter.
 
 ---
+
+## Advanced Features
+
+Beyond drag-and-drop reordering (Workflow 1.4), the following advanced features are implemented:
+
+### Interactive data visualisation (poll results chart)
+
+1. From the presenter view (`/decks/present/:id`), navigate to a poll slide.
+2. The **Live results** panel displays a bar chart with one bar per option.
+3. With at least one response (see Workflow 2), the bars scale proportionally to the responses. → *Demonstrates: interactive visualisation of app data.*
+
+### Real-time updates via polling
+
+1. With the presenter view open on a poll slide, open the audience view in another window (as per Workflow 2).
+2. Submit a poll response from the audience window.
+3. Within 3 seconds, the presenter's chart updates without a manual refresh. → *Demonstrates: real-time data updates using polling.*
+
+### Copy-to-clipboard for unique links
+
+1. In the **Presentation Sharing** panel, click **Copy** next to any field (Code, Join link, or Edit link).
+2. Paste the clipboard contents somewhere - the copied value appears. → *Demonstrates: browser Clipboard API, unique link generation.*
+
+
+
+
+
+
+
+
+
+
+TODO deleting a presentation
+TODO all the new stuff in .env
+TODO node src/api/server.js

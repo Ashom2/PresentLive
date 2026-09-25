@@ -1,5 +1,3 @@
-const BASE_URL = 'https://comp2140-3ea651da.uqcloud.net/api';
-
 /**
  * Makes an authenticated JSON request to the API.
  * Written by DeepSeek AI.
@@ -11,7 +9,7 @@ const BASE_URL = 'https://comp2140-3ea651da.uqcloud.net/api';
  * @returns {Promise<any>} Parsed JSON response, or null for 204.
  */
 async function request(path, { method = 'GET', body } = {}) {  
-  const response = await fetch(`${BASE_URL}${path}`, {
+  const response = await fetch(`${import.meta.env.VITE_BASE_URL}${path}`, {
     method,
     headers: {
       Authorization: `Bearer ${import.meta.env.VITE_API_TOKEN}`,
@@ -219,6 +217,23 @@ export async function createSlide(presentationId, position) {
   // Append the slide's id to the presentation's slides array
   const presentation = await getPresentation(presentationId);
   const existingIds = Array.isArray(presentation?.slides) ? presentation?.slides : [];
+  await updatePresentation(presentationId, { slides: [...existingIds, slide.id] });
+
+  return slide;
+}
+export async function createSlideFromTemplate(presentationId, template, position) {
+  const body = {
+    title: template.title,
+    body: template.body,
+    type: template.type,
+    position,
+    poll: template.poll ?? { question: '', options: [] },
+    response_ids: [],
+  };
+  const slide = await requestEntity('/slide', { method: 'POST', body });
+
+  const presentation = await getPresentation(presentationId);
+  const existingIds = Array.isArray(presentation.slides) ? presentation.slides : [];
   await updatePresentation(presentationId, { slides: [...existingIds, slide.id] });
 
   return slide;
@@ -569,4 +584,26 @@ export async function getAttendeeAndPresentation(attendeeId) {
   const responses = allResponses.filter(Boolean);
 
   return { attendee, presentation, responses }
+}
+
+/**
+ * Generates a presentation outline from a topic using the AI service.
+ *
+ * @param {string} topic
+ * @param {boolean} [includePolls=false]
+ * @returns {Promise<{ title: string, slides: Array<Object> }>}
+ */
+export async function generateDeck(topic, includePolls = false) {
+  const response = await fetch('http://localhost:3001/api/generate-deck', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ topic, includePolls }),
+  });
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(body?.error ?? `Request failed: ${response.status}`);
+  }
+
+  return response.json();
 }
