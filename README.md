@@ -23,7 +23,7 @@ Before running these workflows, ensure the app is running.
 
 1. On the home page (`/`), click **My presentations** in the header. → *Demonstrates: consistent header, clear navigation.*
 2. Click **+ New presentation**.
-3. Enter a title, e.g. `Testing Demo`, and leave "Start blank" selected.
+3. Leave "Start blank" selected, and enter a title, e.g. `Testing Demo`.
 4. Click **Create presentation**.
 5. You should land on the slide editor at `/decks/edit/:id`. Confirm the title appears at the top. → *Demonstrates: routing to a dynamic route parameter, loading data from the URL.*
 
@@ -48,7 +48,7 @@ Before running these workflows, ensure the app is running.
    ### About Me
    - My name is <your name>
    ```
-6. Before clicking **Apply changes**, attempt to navigate to a different slide or page. Verify the page warns you of unsaved changes. Cancel then click **Apply changes**.
+6. Before clicking **Apply changes**, click a different slide or **← My presentations** button. Verify the page warns you of unsaved changes. Cancel then click **Apply changes**.
 7. Select the third slide. Set **Title** to `Poll: Experience`, toggle **Poll slide** on, and fill in:
    - **Question:** `How familiar are you with React?`
    - **Options:** `Beginner`, `Intermediate`, `Advanced`
@@ -66,13 +66,13 @@ Before running these workflows, ensure the app is running.
 3. Click **Copy** next to **Join link**. The button briefly shows "Copied!". Paste it somewhere for use in Workflow 2. → *Demonstrates: unique link generation (copy to clipboard).*
 4. Keep either the **Code** or **Join link** or **Edit link** on hand. You will need it for Workflow 2 (any of the three will work).
 
-### 1.6 Preview the deck (multi-step guided flow)
+### 1.6 Preview the deck
 
 1. Click **Preview** in the top-right of the editor. The preview view opens at `/decks/preview/:id`.
 2. Step through the slides using **Previous** and **Next**. The slide counter in the navigation bar updates. → *Demonstrates: multi-page routing, one step per page, controlled progression.*
 3. On the poll slide, the poll panel appears below the slide, previewing what this poll would look like to an attendee. Verify that the poll cannot be interacted with or submitted.
 
-### 1.8 Present the deck
+### 1.7 Present the deck
 
 1. Click **← Edit** to go back to the editor. Then click **Present** in the top-right of the editor. The presenter view opens at `/decks/present/:id`.
 2. Step through the slides using **Previous** and **Next**. The slide counter in the navigation bar updates. → *Demonstrates: multi-page routing, one step per page, controlled progression.*
@@ -90,7 +90,7 @@ Before running these workflows, ensure the app is running.
 ### 2.1 Join a deck via the shared link
 
 1. Open a **new browser window** (incognito or a different browser is best, to simulate a fresh session with no shared state). → *Demonstrates: the unique link works in a fresh session, no login required.*
-2. On the home page (`/`) Paste the **Code** or **Join link** you copied in Workflow 1, step 1.5.3. → *Demonstrates: unique link access, deep linking.*
+2. On the home page (`/`) in the **Join a presentation** segment, paste the **Code** or **Join link** you copied in Workflow 1.5.3. Click join or press enter. → *Demonstrates: unique link access, deep linking.*
 3. You are redirected to the **Join** page with the code pre-filled. → *Demonstrates: loading data from the URL, multi-step flow.*
 4. Enter your name, e.g. `Cave Johnson`, and click **Join**. → *Demonstrates: controlled form, required-field validation.*
 
@@ -118,39 +118,64 @@ Before running these workflows, ensure the app is running.
 
 1. Return to the presenter view from Workflow 1 (still open in the original window, or reopen it at `/decks/present/:id`). → *Demonstrates: two user types, round trip of data.*
 2. Advance to the poll slide. The **Slide Poll Results** panel now shows 1 response with your chosen option highlighted. → *Demonstrates: data created by one user type is acted on by another, results flow back.*
-3. Expand the **Results by attendee** list. Confirm your name (`Cav Johnson`) appears with the option you chose. → *Demonstrates: derived summary data, linking to related records.*
+3. Expand the **Results by attendee** list. Confirm your name (`Cave Johnson`) appears with the option you chose. → *Demonstrates: derived summary data, linking to related records.*
 
 ### 2.6 Verify the attendee list
 
-1. The **Attendance** panel now shows `Cave Johnson` with status "Finished". → *Demonstrates: derived summary data.*
+1. Still in the presenter view `/decks/present/:id`, the **Presentation Attendance** panel now shows `Cave Johnson` in a table entry with status "Finished". → *Demonstrates: derived summary data.*
 2. Click the attendee's name. You are taken to `/attendee/:id`, a detail page showing their name, the presentation they joined, their status, and their poll responses (question + chosen answer). → *Demonstrates: list view linking to detail view, data round trip.*
 
 **Workflow 2 complete.** An audience member joined via a unique link, participated in a poll, finished, and their data flowed back to the presenter.
 
 ---
 
-## AI Integration
+## Workflow 3: AI-assisted Presentation Generation
 
-**Feature:** Generating a full slide deck from a text prompt. The user enters a topic and chooses whether to include poll slides. The AI returns a structured deck (title, slides with presentMD bodies, and poll questions/options), which the app then persists to the API as real slides. The AI operates on user input - the topic - not on a fixed sample.
+**User story:** A presenter creates a new deck by giving the AI a topic. The AI returns a structured deck of slides and poll slides, which the app persists as real entities the presenter can then edit and present like any other deck.
 
-### How to test
+### 3.1 Generate a deck from a topic
 
-1. From the home page (`/`), click **My presentations** in the header.
-2. Click **+ New presentation**.
-3. Under **Starting point**, select **Generate with AI**. The title field disappears (the AI will generate it) and a **Topic** field appears with the helper text "The AI will generate a title and slides for this topic."
-4. Enter a topic, e.g. `Introduction to React hooks`.
-5. Check **Include poll slides** so you can verify the poll-generation path. (See step 10 for the no-polls path.)
-6. Click **Generate presentation**. The button shows "Generating…" while the AI server is working. This takes roughly 5-15 seconds.
-7. When generation finishes, you are redirected to the editor at `/decks/edit/:id`. The AI-chosen title appears at the top of the page. → *Demonstrates: AI-generated content becoming real app data, not just displayed text.*
-8. In the **Slides** panel on the left, confirm the deck contains several slides with varied titles. → *Demonstrates: the model produced structured output that the app accepted as entities.*
-9. Click through the slides in the list. Confirm that:
-   - At least one slide is marked with a **Poll** badge. → *Demonstrates: the AI respected the "include polls" parameter.*
-   - The slide bodies contain presentMD (headings, bullets, prose, quotes - not just a single format). → *Demonstrates: prompt design producing varied output.*
-   - No slide body opens with a heading identical to its title. → *Demonstrates: the prompt's title/body separation rule.*
-10. To test the no-polls path: repeat steps 2-7 with the same topic but leave **Include poll slides** unchecked. The generated deck should contain only Content slides, with no Poll badge. → *Demonstrates: the AI operates on user input - the parameter changes the output.*
-11. To verify the AI is generating fresh content (not returning a canned response), repeat steps 2-7 with a different topic, e.g. `History of the internet`. The generated title, slides, and content should be entirely different. → *Demonstrates: the AI is operating on user input, not outputting static text.*
+1. From the home page (`/`), click **+ New presentation**.
+2. Under **Starting point**, select **Generate with AI**. The title field disappears (the AI will generate it) and a **Topic** field appears with the helper text "The AI will generate a title and slides for this topic."
+3. Enter a topic, e.g. `Introduction to React hooks`.
+4. Check **Include poll slides** so you can verify the poll-generation path. (See step 9 for the no-polls path.)
+5. Click **Generate presentation**. The button shows "Generating…" while the AI server is working. This takes roughly 5-15 seconds. → *Demonstrates: handling long-running async operations.*
+6. When generation finishes, you are redirected to the editor at `/decks/edit/:id`. The AI-chosen title appears at the top of the page. → *Demonstrates: AI-generated content becoming real app data, not just displayed text.*
+7. In the **Slides** panel on the left, confirm the deck contains several slides with varied titles. → *Demonstrates: structured output from the model being stored as entities via the REST API.*
 
-## Advanced Features
+### 3.2 Verify the AI generated varied content
+
+1. Click through the slides in **Slides** panel. Confirm that:
+   - Each slide has a unique and relevant title.
+   - The slide bodies contain presentMD (headings, bullets, prose, quotes - not just a single format).
+   - At least one slide is marked as a poll and has a question and options.
+2. On a poll slide, click **Preview** in the top-right. Confirm the poll panel appears below the slide with the generated question and options. → *Demonstrates: AI-generated poll data conforms to the app's expected shape.*
+3. Click **← Edit** to return to the editor.
+
+### 3.3 Generate without polls
+
+1. Navigate back to the home page and click **+ New presentation**.
+2. Select **Generate with AI**, enter the same topic Introduction to React hooks, but leave Include poll slides unchecked.
+3. Click **Generate presentation**.
+4. In the editor, confirm the generated deck contains only Content slides and no poll slides. → *Demonstrates: the AI operates on user input - the parameter changes the output.*
+
+### 3.4 Generate on a different topic
+
+1. Return to the home page and click **+ New presentation**.
+2. Select **Generate with AI**, enter a different topic, e.g. `History of the internet`.
+3. Click **Generate presentation**.
+4. In the editor, confirm the generated title, slides, and content are entirely different from the first deck. → *Demonstrates: the AI is generating fresh content, not returning a canned response.*
+
+### 3.5 Edit and present the generated deck
+
+1. Open one of the generated decks from **My presentations** (`/decks`).
+2. Edit a slide's title or body as per Workflow 1.3, and click **Apply changes**. → *Demonstrates: AI-generated entities are editable like any other entity.*
+3. Publish the deck as per Workflow 1.5.
+4. Click **Present** and step through the slides as per Workflow 1.7. → *Demonstrates: the full presenter workflow works on AI-generated decks.*
+
+
+
+# Advanced Features
 
 Beyond drag-and-drop reordering (Workflow 1.4), the following advanced features are implemented:
 
@@ -171,13 +196,15 @@ Beyond drag-and-drop reordering (Workflow 1.4), the following advanced features 
 1. In the **Presentation Sharing** panel, click **Copy** next to any field (Code, Join link, or Edit link).
 2. Paste the clipboard contents somewhere - the copied value appears. → *Demonstrates: browser Clipboard API, unique link generation.*
 
-## Summary of Requirements Coverage
+
+
+# Summary of Requirements Coverage
 
 | Requirement                         | Where demonstrated                                                                                           |
 | ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
 |Consistent header|All pages; header shows brand and nav links|
 |Clear navigation|Workflow 1.1.1, 1.7.1|
-|Colour, icons, instructions|status dropdown (1.5), poll toggle (1.3.6), button colours throughout|
+|Colour, icons, instructions|status dropdown (1.5), poll toggle (1.3.6), presentation status badges, navigation arrows, button colours throughout|
 |Footer|All pages|
 | 3+ related entities|Deck, Slide, Attendee, Poll Response used for Workflow 2.5.2|
 |RESTful API|All actions persist to the API and all API stored entities are displayed in tables on `/admin` page|
@@ -190,7 +217,7 @@ Beyond drag-and-drop reordering (Workflow 1.4), the following advanced features 
 |Two workflows, different user types| Workflow 1 (presenter), Workflow 2 (audience)|
 |Multi-step guided flow| Workflow 2.1-2.4 (one step per page, no going back)|
 |Clear start and end|Home page (2.1), results page (2.4)|
-|AI Integration|AI Integration section|
+|AI Integration|Workflow 3|
 |Advanced feature - drag and drop|Slide re-ordering (workflow 1.4)|
 |Advanced feature - real-time updates via polling|Live slide poll results (2.5), live attendance (2.6)|
 |Advanced feature - copy to clipboard|Workflow 1.5.3|

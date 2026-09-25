@@ -11,6 +11,9 @@
  *    slide
  *    poll response
  * 
+ * Better summary info
+ * Interactive data visualisation
+ * Show poll results on deck review
  * SlideNavBar component
  * 
  * get rid of currentSlide?.type === 'Poll' in deckview 
